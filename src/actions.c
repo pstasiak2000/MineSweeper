@@ -1,0 +1,110 @@
+#include "actions.h"
+
+void action_new(GSimpleAction *action, GVariant *p, gpointer user_data) {
+    AppCtx *ctx = user_data;
+    timer_stop(&ctx->game->timer);
+    timer_reset(&ctx->game->timer);
+
+    ctx->game->mines = reset_mine_number(ctx->game->difficulty);
+
+    char buf[32];
+    snprintf(buf,sizeof(buf),"Mines: %d", ctx->game->mines);
+    gtk_label_set_text(GTK_LABEL(ctx->ui->mines.label), buf);
+    printf("New game triggered. Current difficulty is: %s\n", ctx->game->difficulty);
+    
+    // reset your game state here
+    reset_game_grid(ctx->game->grid);
+    initialize_mines(ctx->game->mines, ctx->game->grid);
+
+    // Update the mine labels in the new game
+    update_mine_labels(ctx->game);
+
+    print_board(ctx->game->grid);
+
+}
+
+void action_quit(GSimpleAction *action, GVariant *p, gpointer user_data) {
+    g_application_quit(G_APPLICATION(user_data));
+}
+
+void action_about(GSimpleAction *action, GVariant *p, gpointer user_data) {
+    printf("MineSweeper GTK4  demo\n");
+}
+
+/* --- Callback for difficulty action --- */
+void action_difficulty(GSimpleAction *action, GVariant *p, gpointer user_data) {
+    AppCtx *ctx = user_data;
+
+    // Firstly confirm the change
+    if (show_reset_confirm_dialog(NULL)) {
+
+
+        const char *level = g_variant_get_string(p, NULL);
+        ctx->game->difficulty = level;
+
+        /* Update action state so GTK shows the selected radio */
+        g_simple_action_set_state(action, g_variant_new_string(level));
+
+        g_print("Difficulty set to: %s\n", level);
+
+        // Reset the timer
+        timer_stop(&ctx->game->timer);
+
+        // Update number of mines text
+        ctx->game->mines = reset_mine_number(level);
+        char buf[32];
+        snprintf(buf,sizeof(buf),"Mines: %d", ctx->game->mines);
+        gtk_label_set_text(GTK_LABEL(ctx->ui->mines.label), buf);
+
+        /* Clear the existing grid*/
+        GtkWidget *child, *next;
+        for (child = gtk_widget_get_first_child(GTK_WIDGET(ctx->ui->grid));
+            child != NULL;
+            child = next)
+        {
+            next = gtk_widget_get_next_sibling(child);
+            gtk_widget_unparent(child);
+        }
+
+        // Reset the size of the grid based on the level
+        reset_grid_size(level,ctx->game->grid_size);
+
+        // Change the new grid size
+        int rows = ctx->game->grid_size[0];
+        int cols = ctx->game->grid_size[1];
+
+        // De-allocate and then re-allocate the grid memory
+        destroy_game_grid(ctx->game->grid);
+
+        ctx->game->grid = create_game_grid(ctx->game->grid_size);
+        initialize_mines(ctx->game->mines,ctx->game->grid);
+
+
+        generate_gtk_grid(ctx->ui->grid,ctx->game);
+        
+        gtk_widget_set_visible(ctx->ui->grid, TRUE);    
+    } else {
+        return; // user clicked No
+    }
+}
+
+
+
+
+
+
+
+/* --- Array of Toolbar actions --- */
+static const GActionEntry actions[] = {
+        { "New",   action_new, NULL, NULL, NULL }, 
+        { "Quit",  action_quit,  NULL, NULL, NULL },
+        { "About", action_about, NULL, NULL, NULL },
+        { "Difficulty", action_difficulty, "s", "'easy'", NULL }
+};
+
+/* Getter for external use*/
+const GActionEntry *get_actions(size_t *n) {
+    *n = G_N_ELEMENTS(actions);
+    return actions;
+}
+
