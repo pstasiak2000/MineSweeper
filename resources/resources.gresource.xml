@@ -1,0 +1,5 @@
+<gresources>
+  <gresource prefix="/com/github/pstasiak2000/minesweeper">
+    <file>style.css</file>
+  </gresource>
+</gresources>

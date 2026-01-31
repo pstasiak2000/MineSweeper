@@ -6,6 +6,19 @@ set(CMAKE_C_STANDARD 11)
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(GTK4 REQUIRED gtk4)
 
+set(RESOURCES_C "${CMAKE_CURRENT_BINARY_DIR}/resources.c")
+
+add_custom_command(
+    OUTPUT ${RESOURCES_C}
+    COMMAND glib-compile-resources
+            --sourcedir=${CMAKE_CURRENT_SOURCE_DIR}/resources
+            --target=${RESOURCES_C}
+            --generate-source
+            ${CMAKE_CURRENT_SOURCE_DIR}/resources/resources.gresource.xml
+    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/resources/resources.gresource.xml
+    COMMENT "Compiling GResources..."
+)
+
 # --- Timer library ---
 add_library(timer STATIC src/timer/timer.c)
 add_library(gui STATIC src/gui/gui.c)
@@ -42,6 +55,7 @@ add_executable(MineSweeper
     src/base.c
     src/actions.c
     src/toolbar.c
+    ${RESOURCES_C}
 )
 
 target_include_directories(MineSweeper PRIVATE

@@ -17,43 +17,10 @@ static void activate(GtkApplication *app, gpointer user_data) {
 
     /* Create a CSS provider for styling */
     provider = gtk_css_provider_new();
-    gtk_css_provider_load_from_string(provider,
-        "label.timer { font-size: 24pt; font-weight: bold; color: white; }"
-        "label.mines { font-size: 24pt; font-weight: bold; color: white; }"
-        ".header { background-color: rgba(66, 66, 66, 1); }"
-    ".cell {"
-    "    background-color: #3a3a3aff; "  /* default white */
-    "    border-radius: 0px;"
-    "    border: 1px solid rgba(122, 122, 122, 1);"
-    "}"
-    ".cell-label-easy {"
-    "   font-size: 5em;"
-    "   font-weight: bold;"
-    "   border: 1px solid rgba(122, 122, 122, 1);"
-    "}"
-    ".cell-label-medium {"
-    "   font-size: 3em;"
-    "   font-weight: bold;"
-    "   border: 1px solid rgba(122, 122, 122, 1);"
-    "}"
-    ".cell-label-hard {"
-    "   font-size: 1.5em;"
-    "   font-weight: bold;"
-    "   border: 1px solid rgba(122, 122, 122, 1);"
-    "}"
-    ".flag-label-easy {"
-    "   font-size: 5em;"
-    "   border: 1px solid rgba(122, 122, 122, 1);"
-    "}"
-    ".flag-label-medium {"
-    "   font-size: 2em;"
-    "   border: 1px solid rgba(122, 122, 122, 1);"
-    "}"
-    ".flag-label-hard {"
-    "   font-size: 1.5em;"
-    "   border: 1px solid rgba(122, 122, 122, 1);"
-    "}"
-);
+    gtk_css_provider_load_from_resource(
+        provider,
+        "/com/github/pstasiak2000/minesweeper/style.css"
+    );
 
     GtkWidget *window = gtk_application_window_new(app);
     ui->window = window;
