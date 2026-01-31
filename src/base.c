@@ -17,7 +17,7 @@ void update_mine_labels(Game *game){
                 snprintf(buf,sizeof(buf),"%d",block->val);
             
             update_label_text(block->label, buf);
-            gtk_stack_set_visible_child_name(GTK_STACK(block->stack), "label");
+            // gtk_stack_set_visible_child_name(GTK_STACK(block->stack), "label");
         }
     }  
 }
@@ -59,7 +59,130 @@ static GtkWidget *create_block_widget(WidgetFactory factory, void *user_data){
     return w;
 }
 
-void generate_gtk_grid(GtkWidget *grid, Game *game) {
+static void reveal_block(GameGrid *grid, int row, int col) {
+    // bounds check
+    if (row < 0 || col < 0 || row >= grid->size || col >= grid->rows[0].size)
+        return;
+
+    Block *block = &grid->rows[row].cols[col];
+
+    // Already revealed or flagged
+    if (!block->active || block->flag)
+        return;
+
+    // Reveal this block
+    block->active = FALSE;
+    gtk_stack_set_visible_child_name(GTK_STACK(block->stack), "label");
+    
+
+    // Only recurse if value is zero
+    if (block->val == 0) {
+        // Check all 8 neighbors
+        for (int dr = -1; dr <= 1; dr++) {
+            for (int dc = -1; dc <= 1; dc++) {
+                if (dr == 0 && dc == 0)
+                    continue;
+                reveal_block(grid, row + dr, col + dc);
+            }
+        }
+    }
+}
+
+static void reveal_all_mines(GameGrid *grid){
+    for (int row = 0; row < grid->size; row++) {
+        for (int col = 0; col < grid->rows[0].size; col++) { 
+            grid->rows[row].cols[col].active = FALSE;  
+            if(grid->rows[row].cols[col].mine){
+                gtk_stack_set_visible_child_name(
+                    GTK_STACK(grid->rows[row].cols[col].stack), "label");
+            }
+        }
+    }
+}
+
+static void on_cell_clicked(GtkButton *button, gpointer user_data)
+{
+    CellCallBackData *data = user_data;
+    AppCtx *ctx = data->ctx;
+    
+    Game *game = ctx->game;
+    Block *block = data->block;
+
+    // g_print("Clicked cell at row=%d col=%d\n", block->row, block->col);
+
+    if (!block->active)
+        return;
+
+    // Start the timer if not already started
+    if (!ctx->timer.timeout_id)
+        timer_start(&ctx->timer);
+
+    if (block->mine) {
+        g_print("💥 Mine!\n"); 
+        reveal_all_mines(game->grid); // Reveal all mines on the screen
+        timer_pause(&ctx->timer);
+        game->state = 0;
+    } else {
+        reveal_block(game->grid, block->row, block->col);
+    }
+}
+
+static void on_cell_right_clicked(GtkGestureClick *gesture,
+                                  int n_press,
+                                  double x,
+                                  double y,
+                                  gpointer user_data)
+{
+    CellCallBackData *data = user_data;
+    Block *block = data->block;
+    AppCtx *ctx = data->ctx;
+
+    GameUI *ui = ctx->ui;
+    Game *game = ctx->game;
+
+    if(!block->active)
+        return;
+
+    // Set the flag and increase/decrease the number of mines
+    printf("Before: %d\n",game->mines);
+
+    block->is_flag = !block->is_flag;
+    if(block->is_flag) game->mines--;
+    if(!block->is_flag) game->mines++;
+
+    printf("After: %d\n",game->mines);
+
+
+    /* Set the mines label */
+    char buf[32];
+    snprintf(buf,sizeof(buf),"💣: %d", game->mines);
+    
+    update_label_text(ui->mines.label,buf);
+    // gtk_label_set_text(GTK_LABEL(ctx->ui->mines.label), buf);
+
+    gtk_stack_set_visible_child_name(GTK_STACK(block->stack),
+                                     block->is_flag ? "flag_label" : "button");
+}
+
+void reset_visibility(Game *game){
+
+    int rows = game->grid_size[0];
+    int cols = game->grid_size[1];
+    
+    for (int row = 0; row < rows; row++) {
+        for (int col = 0; col < cols; col++) {
+
+            Block *block = &game->grid->rows[row].cols[col];
+
+            block->active = TRUE;
+            gtk_stack_set_visible_child_name(GTK_STACK(block->stack), "button");
+        }
+    }
+}
+
+void generate_gtk_grid(GtkWidget *grid, AppCtx *ctx) {
+    Game *game = ctx->game;
+
     int rows = game->grid_size[0];
     int cols = game->grid_size[1];
 
@@ -114,27 +237,28 @@ void generate_gtk_grid(GtkWidget *grid, Game *game) {
             gtk_stack_add_named(GTK_STACK(stack), label, "label");
             gtk_stack_add_named(GTK_STACK(stack), flag_label, "flag_label");
 
-            gtk_stack_set_visible_child_name(GTK_STACK(stack), "label");
+            gtk_stack_set_visible_child_name(GTK_STACK(stack), "button");
 
             // --- Attach stack to the grid ---
             gtk_grid_attach(GTK_GRID(grid), stack, col, row, 1, 1);
 
             // // --- Prepare callback data ---
-            // CellCallBackData *data = g_new(CellCallBackData, 1);
-            // data->block = block;
-            // data->game = game;
+            CellCallBackData *data = g_new(CellCallBackData, 1);
+            data->ctx = ctx;
+            data->block = block;
+            
 
             // // --- Left click using the button's native signal ---
-            // g_signal_connect(btn, "clicked",
-            //                  G_CALLBACK(on_cell_clicked), data);
+            g_signal_connect(btn, "clicked",
+                             G_CALLBACK(on_cell_clicked), data);
 
-            // // --- Right click using GtkGestureClick on the stack ---
-            // GtkGestureClick *right_click = GTK_GESTURE_CLICK(gtk_gesture_click_new());
-            // gtk_gesture_single_set_button(GTK_GESTURE_SINGLE(right_click), GDK_BUTTON_SECONDARY);
-            // gtk_widget_add_controller(stack, GTK_EVENT_CONTROLLER(right_click));
+            // --- Right click using GtkGestureClick on the stack ---
+            GtkGestureClick *right_click = GTK_GESTURE_CLICK(gtk_gesture_click_new());
+            gtk_gesture_single_set_button(GTK_GESTURE_SINGLE(right_click), GDK_BUTTON_SECONDARY);
+            gtk_widget_add_controller(stack, GTK_EVENT_CONTROLLER(right_click));
 
-            // g_signal_connect(right_click, "pressed",
-            //                  G_CALLBACK(on_cell_right_clicked), data);
+            g_signal_connect(right_click, "pressed",
+                             G_CALLBACK(on_cell_right_clicked), data);
         }
     }
 }

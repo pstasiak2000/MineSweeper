@@ -85,11 +85,13 @@ void action_difficulty(GSimpleAction *action, GVariant *p, gpointer user_data) {
         destroy_game_grid(ctx->game->grid);
 
         game->grid = create_game_grid(ctx->game->grid_size);
-        set_mines(game->mines,game->grid);
-
-        generate_gtk_grid(ui->grid,game);
         
-        gtk_widget_set_visible(ctx->ui->grid, TRUE);    
+        generate_gtk_grid(ui->grid, ctx);
+        reset_game_grid(game->grid);
+
+        set_mines(game->mines,game->grid);
+        update_mine_labels(game);
+        // gtk_widget_set_visible(ui->grid, TRUE);    
     } else {
         return; // user clicked No
     }

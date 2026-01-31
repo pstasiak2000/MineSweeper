@@ -13,12 +13,11 @@ typedef struct {
 } AppCtx;
 
 typedef struct {
-    AppCtx *ctz; // AppCtx pointer
+    AppCtx *ctx; // AppCtx pointer
     Block *block; // Current block
 } CellCallBackData;
 
-/* Fill the GTK GameGrid struct and attach it to grid */
-void generate_gtk_grid(GtkWidget *grid, Game *game);
+
 
 
 #endif

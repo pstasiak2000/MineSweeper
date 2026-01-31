@@ -106,68 +106,9 @@ gboolean show_reset_confirm_dialog(GtkWindow *parent) {
 
 
 
-// static void reveal_block(GameGrid *grid, int row, int col) {
-//     // bounds check
-//     if (row < 0 || col < 0 || row >= grid->size || col >= grid->rows[0].size)
-//         return;
 
-//     Block *block = &grid->rows[row].cols[col];
 
-//     // Already revealed or flagged
-//     if (!block->active || block->flag)
-//         return;
 
-//     // Reveal this block
-//     block->active = FALSE;
-//     gtk_stack_set_visible_child_name(GTK_STACK(block->stack), "label");
-
-//     // Only recurse if value is zero
-//     if (block->val == 0) {
-//         // Check all 8 neighbors
-//         for (int dr = -1; dr <= 1; dr++) {
-//             for (int dc = -1; dc <= 1; dc++) {
-//                 if (dr == 0 && dc == 0)
-//                     continue;
-//                 reveal_block(grid, row + dr, col + dc);
-//             }
-//         }
-//     }
-// }
-
-// static void reveal_all_mines(GameGrid *grid){
-//     for (int row = 0; row < grid->size; row++) {
-//         for (int col = 0; col < grid->rows[0].size; col++) {    
-//             if(grid->rows[row].cols[col].mine){
-//                 gtk_stack_set_visible_child_name(
-//                     GTK_STACK(grid->rows[row].cols[col].stack), "label");
-//             }
-//         }
-//     }
-// }
-
-// static void on_cell_clicked(GtkButton *button, gpointer user_data)
-// {
-//     CellCallBackData *data = user_data;
-//     Game *game = data->game;
-//     Block *block = data->block;
-
-//     // g_print("Clicked cell at row=%d col=%d\n", block->row, block->col);
-
-//     // Start the timer if not already started
-//     if (!game->timer.timeout_id)
-//         timer_start(&game->timer);
-
-//     if (!block->active)
-//         return;
-
-//     if (block->mine) {
-//         g_print("💥 Mine!\n"); 
-//         reveal_all_mines(game->grid); // Reveal all mines on the screen
-//         timer_pause(&game->timer);
-//     } else {
-//         reveal_block(game->grid, block->row, block->col);
-//     }
-// }
 
 // static void on_cell_mouse_press(GtkGestureClick *gesture,
 //                                 int n_press,
@@ -195,29 +136,7 @@ gboolean show_reset_confirm_dialog(GtkWindow *parent) {
 //     }
 // }
 
-// static void on_cell_right_clicked(GtkGestureClick *gesture,
-//                                   int n_press,
-//                                   double x,
-//                                   double y,
-//                                   gpointer user_data)
-// {
-//     CellCallBackData *data = user_data;
-//     Block *block = data->block;
-//     Game *game = data->game;
 
-//     // Set the flag and increase/decrease the number of mines
-//     block->is_flag = !block->is_flag;
-//     if(block->is_flag) game->mines--;
-//     if(!block->is_flag) game->mines++;
-
-//     // Set the mines label
-//     // char buf[32];
-//     // snprintf(buf,sizeof(buf),"Mines: %d", game->mines);
-//     // gtk_label_set_text(GTK_LABEL(ctx->ui->mines.label), buf);
-
-//     gtk_stack_set_visible_child_name(GTK_STACK(block->stack),
-//                                      block->is_flag ? "flag_label" : "button");
-// }
 
 
 

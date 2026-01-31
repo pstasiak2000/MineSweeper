@@ -6,7 +6,7 @@
 
 #define MINES_EASY 10
 #define MINES_MEDIUM 40
-#define MINES_HARD 200
+#define MINES_HARD 150
 
 #define GRID_SIZE_EASY 10
 #define GRID_SIZE_MEDIUM 15
@@ -39,6 +39,7 @@ typedef struct {
     const char *difficulty;
     int mines;
     int grid_size[2];
+    int status;
     GameGrid *grid;
 } Game ;
 

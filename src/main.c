@@ -4,6 +4,7 @@
 
 #include "app_ctx.h"
 #include "actions.h"
+#include "base.h"
 #include "toolbar.h"
 
 
@@ -25,7 +26,7 @@ static void activate(GtkApplication *app, gpointer user_data) {
     GtkWidget *window = gtk_application_window_new(app);
     ui->window = window;
     gtk_window_set_title(GTK_WINDOW(window), "MineSweeper v1.0");
-    gtk_window_set_default_size(GTK_WINDOW(window), 800, 800);
+    gtk_window_set_default_size(GTK_WINDOW(window), 900, 900);
 
     GtkWidget *main_vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
     gtk_widget_set_vexpand(main_vbox, GTK_ALIGN_FILL);
@@ -43,7 +44,7 @@ static void activate(GtkApplication *app, gpointer user_data) {
 
     /* Timer panel and mines panels */
     ui->timer = create_header_panel("00:00","timer");
-    ui->mines = create_header_panel("💣 0","mines");
+    ui->mines = create_header_panel("💣 10","mines");
 
     gtk_box_append(GTK_BOX(ui->header_box), ui->timer.box);
     gtk_box_append(GTK_BOX(ui->header_box), ui->mines.box); 
@@ -54,9 +55,16 @@ static void activate(GtkApplication *app, gpointer user_data) {
     /* Generate the grid */
     ui->grid = create_empty_gui_grid();
     game->grid = create_game_grid(game->grid_size);
-    set_mines(game->mines, game->grid);
-    generate_gtk_grid(ui->grid,game);
 
+    generate_gtk_grid(ui->grid,ctx);    
+
+    reset_game_grid(game->grid);
+    set_mines(game->mines, game->grid); 
+    update_mine_labels(game);
+
+    
+
+    // gtk_widget_set_visible(ui->grid, TRUE);
 
     // Add the grid to your main vbox
     gtk_box_append(GTK_BOX(main_vbox), ctx->ui->grid);
