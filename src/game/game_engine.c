@@ -2,31 +2,30 @@
 
 int reset_mine_number(const char* level){
     if(strcmp(level,"easy") == 0)
-        return 10;
+        return MINES_EASY;
     else if(strcmp(level,"medium") == 0)
-        return 40;
+        return MINES_MEDIUM;
     else if(strcmp(level,"hard") == 0)
-        return 99; 
+        return MINES_HARD; 
     else 
         return 10;
 }
 
 void reset_grid_size(const char *level, int grid_size[2]) {
     if (strcmp(level, "easy") == 0) {
-        grid_size[0] = 10;
-        grid_size[1] = 10;
+        grid_size[0] = GRID_SIZE_EASY;
+        grid_size[1] = GRID_SIZE_EASY;
     } else if (strcmp(level, "medium") == 0) {
-        grid_size[0] = 20;
-        grid_size[1] = 20;
+        grid_size[0] = GRID_SIZE_MEDIUM;
+        grid_size[1] = GRID_SIZE_MEDIUM;
     } else if (strcmp(level, "hard") == 0) {
-        grid_size[0] = 30;
-        grid_size[1] = 30;
+        grid_size[0] = GRID_SIZE_HARD;
+        grid_size[1] = GRID_SIZE_HARD;
     } else {  // default
-        grid_size[0] = 10;
-        grid_size[1] = 10;
+        grid_size[0] = GRID_SIZE_EASY;
+        grid_size[1] = GRID_SIZE_EASY;
     }
 }
-
 
 void print_board(GameGrid *grid){
     int rows = grid->size;
@@ -43,7 +42,6 @@ void print_board(GameGrid *grid){
     }
     printf("\n");
 }
-
 
 GameGrid *create_game_grid(int grid_size[2]){
     GameGrid *grid = malloc(sizeof(GameGrid));
@@ -71,7 +69,6 @@ GameGrid *create_game_grid(int grid_size[2]){
 
     return grid;
 }
-
 
 void destroy_game_grid(GameGrid *grid){
     if(!grid) return;
@@ -101,7 +98,7 @@ void reset_game_grid(GameGrid *grid){
     }   
 }
 
-void initialize_mines(int mines, GameGrid *grid) {
+void set_mines(int mines, GameGrid *grid) {
     int rows = grid->size;
     int cols = grid->rows[0].size;
 
@@ -143,3 +140,7 @@ void initialize_mines(int mines, GameGrid *grid) {
 
     print_board(grid);
 }
+
+
+
+

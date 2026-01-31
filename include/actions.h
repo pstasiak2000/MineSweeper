@@ -2,8 +2,7 @@
 #define ACTIONS_H
 
 #include <gtk/gtk.h>
-#include "app_ctx.h"
-#include "gui.h"
+#include "base.h"
 
 const GActionEntry *get_actions(size_t *n);
 

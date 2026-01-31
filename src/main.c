@@ -1,6 +1,6 @@
 #include <gtk/gtk.h>
 
-#include <timer/timer.h>
+// #include <timer/timer.h>
 
 #include "app_ctx.h"
 #include "actions.h"
@@ -11,6 +11,9 @@ static int counter = 0;
 
 static void activate(GtkApplication *app, gpointer user_data) {
     AppCtx *ctx = user_data;
+
+    Game *game = ctx->game;
+    GameUI *ui = ctx->ui;
 
     /* Create a CSS provider for styling */
     provider = gtk_css_provider_new();
@@ -29,7 +32,7 @@ static void activate(GtkApplication *app, gpointer user_data) {
     "   border: 1px solid rgba(122, 122, 122, 1);"
     "}"
     ".cell-label-medium {"
-    "   font-size: 2em;"
+    "   font-size: 3em;"
     "   font-weight: bold;"
     "   border: 1px solid rgba(122, 122, 122, 1);"
     "}"
@@ -53,8 +56,9 @@ static void activate(GtkApplication *app, gpointer user_data) {
 );
 
     GtkWidget *window = gtk_application_window_new(app);
+    ui->window = window;
     gtk_window_set_title(GTK_WINDOW(window), "MineSweeper v1.0");
-    gtk_window_set_default_size(GTK_WINDOW(window), 900, 900);
+    gtk_window_set_default_size(GTK_WINDOW(window), 800, 800);
 
     GtkWidget *main_vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
     gtk_widget_set_vexpand(main_vbox, GTK_ALIGN_FILL);
@@ -66,19 +70,26 @@ static void activate(GtkApplication *app, gpointer user_data) {
     gtk_box_append(GTK_BOX(main_vbox), menubar);
 
     /* Header box for timer and number of mines */
-    GtkWidget *header_box = create_header_box(ctx->game);
-    gtk_widget_add_css_class(header_box, "header");
-    gtk_box_append(GTK_BOX(main_vbox), header_box);
+    ui->header_box = create_header_box();
+    gtk_widget_add_css_class(ui->header_box, "header");
+    gtk_box_append(GTK_BOX(main_vbox), ui->header_box);
 
     /* Timer panel and mines panels */
-    ctx->ui->timer = create_timer_panel(ctx->game);
-    ctx->ui->mines = create_mines_panel(ctx->game);
+    ui->timer = create_header_panel("00:00","timer");
+    ui->mines = create_header_panel("💣 0","mines");
 
-    gtk_box_append(GTK_BOX(header_box), ctx->ui->timer.box);
-    gtk_box_append(GTK_BOX(header_box), ctx->ui->mines.box); 
+    gtk_box_append(GTK_BOX(ui->header_box), ui->timer.box);
+    gtk_box_append(GTK_BOX(ui->header_box), ui->mines.box); 
 
-    /* Create the grid */
-    ctx->ui->grid = create_gui_grid(ctx->game);
+    // Initialize the timer here
+    timer_init(&ctx->timer, GTK_LABEL(ui->timer.label));
+
+    /* Generate the grid */
+    ui->grid = create_empty_gui_grid();
+    game->grid = create_game_grid(game->grid_size);
+    set_mines(game->mines, game->grid);
+    generate_gtk_grid(ui->grid,game);
+
 
     // Add the grid to your main vbox
     gtk_box_append(GTK_BOX(main_vbox), ctx->ui->grid);
@@ -97,19 +108,19 @@ static void activate(GtkApplication *app, gpointer user_data) {
 int main(int argc, char **argv) {
     gtk_init();
 
-    srand(time(NULL));  // Seed RNG with current time
+    srand(time(NULL));  // Seed RNG with current tim
+
+    GtkApplication *app =
+        gtk_application_new("com.example.menu", G_APPLICATION_DEFAULT_FLAGS);
 
     Game game = { .difficulty = "easy", .mines = 10, .grid_size={10,10}};
     GameUI ui = {0};
 
     AppCtx ctx = {
+        .app = app,
         .game = &game,
-        .ui = &ui
+        .ui = &ui,
     };
-
-
-    GtkApplication *app =
-        gtk_application_new("com.example.menu", G_APPLICATION_DEFAULT_FLAGS);
 
     size_t n;
     const GActionEntry *actions = get_actions(&n);
