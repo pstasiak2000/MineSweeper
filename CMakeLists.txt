@@ -66,3 +66,28 @@ target_include_directories(MineSweeper PRIVATE
 
 target_compile_options(MineSweeper PRIVATE ${GTK4_CFLAGS_OTHER})
 target_link_libraries(MineSweeper PRIVATE timer gui game_engine ${GTK4_LIBRARIES})
+
+
+### --- Install the executable ---
+install(TARGETS MineSweeper
+    RUNTIME DESTINATION bin
+)
+
+### --- Install the .desktop file ---
+install(FILES
+    ${CMAKE_SOURCE_DIR}/data/org.example.MineSweeper.desktop
+    DESTINATION share/applications
+)
+
+### --- Install AppStream metadata ---
+install(FILES
+    ${CMAKE_SOURCE_DIR}/data/org.example.MineSweeper.appdata.xml
+    DESTINATION share/metainfo
+)
+
+
+### --- Install scalable icon ---
+install(FILES
+    ${CMAKE_SOURCE_DIR}/resources/icons/org.example.MineSweeper.svg
+    DESTINATION share/icons/hicolor/scalable/apps
+)
