@@ -63,13 +63,13 @@ This will compile all source files and generate the MineSweeper executable in th
 
 ### 3. Install the project
 
-#### * To install to the default systems directories:
+* **To install to the default systems directories:**
 
 ```bash
 sudo cmake --install build
 ```
 
-#### * To install to a custom directory (useful for staging or packaging):
+* **To install to a custom directory (useful for staging or packaging):**
 
 ```bash
 DESTDIR=/path/to/install cmake --install build
