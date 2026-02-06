@@ -88,7 +88,7 @@ int main(int argc, char **argv) {
     GtkApplication *app =
         gtk_application_new("com.example.menu", G_APPLICATION_DEFAULT_FLAGS);
 
-    Game game = { .difficulty = "easy", .mines = 10, .grid_size={10,10}};
+    Game game = { .difficulty = "easy", .mines = 10, .grid_size={10,10}, .status=GAME_PLAYING};
     GameUI ui = {0};
 
     AppCtx ctx = {

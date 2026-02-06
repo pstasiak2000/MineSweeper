@@ -12,6 +12,8 @@
 #define GRID_SIZE_MEDIUM 15
 #define GRID_SIZE_HARD 30
 
+
+
 typedef struct {
     int row;
     int col;
@@ -35,13 +37,20 @@ typedef struct {
     BlockRow *rows;
 } GameGrid;
 
+typedef enum {
+    GAME_PLAYING = 0,   // game is ongoing
+    GAME_WON     = 1,   // player has won
+    GAME_LOST    = 2    // player has lost
+} GameStatus;
+
 typedef struct {
     const char *difficulty;
     int mines;
     int grid_size[2];
-    int status;
+    GameStatus status;
     GameGrid *grid;
 } Game ;
+
 
 // Creates the game grid structure
 GameGrid *create_game_grid(int grid_size[2]);

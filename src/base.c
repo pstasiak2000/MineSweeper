@@ -100,6 +100,31 @@ static void reveal_all_mines(GameGrid *grid){
     }
 }
 
+static void reveal_all_blocks(GameGrid *grid){
+    for (int row = 0; row < grid->size; row++) {
+        for (int col = 0; col < grid->rows[0].size; col++) { 
+            grid->rows[row].cols[col].active = FALSE;  
+                gtk_stack_set_visible_child_name(
+                    GTK_STACK(grid->rows[row].cols[col].stack), "label");
+        }
+    }
+}
+
+
+static int check_win_status(GameGrid *grid){
+    for (int row = 0; row < grid->size; row++) {
+        for (int col = 0; col < grid->rows[0].size; col++) { 
+            
+            Block *block = &grid->rows[row].cols[col];
+
+            /* Check if all mines have been covered with a flag*/
+            if(block->mine && !block->is_flag)
+                return 0;
+        }
+    }    
+    return 1;
+}
+
 static void on_cell_clicked(GtkButton *button, gpointer user_data)
 {
     CellCallBackData *data = user_data;
@@ -121,8 +146,13 @@ static void on_cell_clicked(GtkButton *button, gpointer user_data)
         g_print("💥 Mine!\n"); 
         reveal_all_mines(game->grid); // Reveal all mines on the screen
         timer_pause(&ctx->timer);
-        game->state = 0;
-    } else {
+        game->status = GAME_LOST;
+    } else if(check_win_status(game->grid)) { 
+        g_print("Congratulations - You won!!!\n");
+        reveal_all_blocks(game->grid);
+        timer_pause(&ctx->timer);
+        game->status = GAME_WON;
+    }  else {
         reveal_block(game->grid, block->row, block->col);
     }
 }
@@ -140,18 +170,17 @@ static void on_cell_right_clicked(GtkGestureClick *gesture,
     GameUI *ui = ctx->ui;
     Game *game = ctx->game;
 
-    if(!block->active)
+    if(!block->active || !ctx->timer.timeout_id)
         return;
 
     // Set the flag and increase/decrease the number of mines
-    printf("Before: %d\n",game->mines);
+
+    if(!game->mines && !block->is_flag)
+        return;
 
     block->is_flag = !block->is_flag;
     if(block->is_flag) game->mines--;
     if(!block->is_flag) game->mines++;
-
-    printf("After: %d\n",game->mines);
-
 
     /* Set the mines label */
     char buf[32];
