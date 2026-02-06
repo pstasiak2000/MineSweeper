@@ -34,6 +34,6 @@ cp packaging/arch/PKGBUILD .
 makepkg -si
 ```
 
-```warning
+[!WARNING]
 Note: The PKGBUILD assumes the repository layout is unchanged. Moving files or directories may cause build failures.
-```
+
