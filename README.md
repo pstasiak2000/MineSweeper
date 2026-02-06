@@ -84,13 +84,13 @@ DESTDIR=/path/to/install cmake --install build
 kbuildsycoca5
 ```
 * To uninstall:
-    + If installed via PKGBUILD:
+    * If installed via PKGBUILD:
     
     ```bash
         sudo pacman -R minesweeper
     ```
 
-    + If installed manually: remove the installed files in ```/usr/bin```, ```/usr/share/applications/```, ```/usr/share/icons/```, and ```/usr/share/metainfo/```.
+    * If installed manually: remove the installed files in ```/usr/bin```, ```/usr/share/applications/```, ```/usr/share/icons/```, and ```/usr/share/metainfo/```.
 
 
 ## Dependencies
