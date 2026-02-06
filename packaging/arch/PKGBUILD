@@ -10,18 +10,17 @@ depends=('gtk4' 'librsvg')
 makedepends=('cmake' 'pkgconf' 'glib2')
 
 # No source: we're building directly from the current repo
-source=()
+source=("file://$PWD")
 noextract=()
-sha256sums=()
+sha256sums=('SKIP')
 
 build() {
+    echo "$PWD"
+    echo $srcdir
+
     mkdir -p build
     cd build
-
-    echo "$srcdir"
-
-    # $srcdir points to the current repo root
-    cmake -DCMAKE_INSTALL_PREFIX=/usr "$PWD/.."
+    cmake -DCMAKE_INSTALL_PREFIX=/usr "$srcdir/../"   # <-- repo root
     make
 }
 
@@ -30,17 +29,17 @@ package() {
     make DESTDIR="$pkgdir" install
 
     # Install desktop file
-    install -Dm644 "$srcdir/data/org.example.MineSweeper.desktop" \
+    install -Dm644 "$srcdir/../data/org.example.MineSweeper.desktop" \
         "$pkgdir/usr/share/applications/org.example.MineSweeper.desktop"
 
     # Install AppStream metadata
-    install -Dm644 "$srcdir/data/org.example.MineSweeper.appdata.xml" \
+    install -Dm644 "$srcdir/../data/org.example.MineSweeper.appdata.xml" \
         "$pkgdir/usr/share/metainfo/org.example.MineSweeper.appdata.xml"
 
     # Install icons
-    install -Dm644 "$srcdir/resources/icons/org.example.MineSweeper.svg" \
+    install -Dm644 "$srcdir/../resources/icons/org.example.MineSweeper.svg" \
         "$pkgdir/usr/share/icons/hicolor/scalable/apps/org.example.MineSweeper.svg"
 
-    install -Dm644 "$srcdir/resources/icons/org.example.MineSweeper.png" \
+    install -Dm644 "$srcdir/../resources/icons/org.example.MineSweeper.png" \
         "$pkgdir/usr/share/icons/hicolor/64x64/apps/org.example.MineSweeper.png"
 }
