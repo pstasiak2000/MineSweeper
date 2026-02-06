@@ -8,7 +8,8 @@ url="https://github.com/pstasiak2000/MineSweeper"
 license=('MIT')
 depends=('gtk4' 'librsvg')
 makedepends=('cmake' 'pkgconf' 'glib2')
-source=("https://github.com/pstasiak2000/MineSweeper/archive/refs/tags/v${pkgver}.tar.gz")
+source=()
+#source=("https://github.com/pstasiak2000/MineSweeper/archive/refs/tags/v${pkgver}.tar.gz")
 sha256sums=('SKIP')  # replace with actual sha256sum for release tarball
 
 # Optional: auto-update pkgver from git tag
