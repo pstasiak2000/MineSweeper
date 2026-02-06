@@ -14,12 +14,7 @@ sha256sums=()
 build() {
     mkdir -p build
     cd build
-
-    # Generate the GResources source file
-    glib-compile-resources ../resources/resources.gresource.xml --generate-source --target=resources.c
-
-    # Run CMake from the repo root
-    cmake -DCMAKE_INSTALL_PREFIX=/usr ..
+    cmake -DCMAKE_INSTALL_PREFIX=/usr "$srcdir"
     make
 }
 
