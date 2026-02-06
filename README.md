@@ -34,6 +34,7 @@ cp packaging/arch/PKGBUILD .
 makepkg -si
 ```
 
-[!WARNING]
-Note: The PKGBUILD assumes the repository layout is unchanged. Moving files or directories may cause build failures.
+> [!WARNING]
+> Note: The PKGBUILD assumes the repository layout is unchanged. Moving files or directories may cause build failures.
 
+After installation, MineSweeper will be available as a standard application and should appear in your desktop environment’s application menu.
