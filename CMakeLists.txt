@@ -1,5 +1,26 @@
 cmake_minimum_required(VERSION 3.10)
-project(MineSweeper C)
+
+find_package(Git QUIET)
+
+### --- VERSIONING FROM GIT --- 
+if(GIT_FOUND)
+    execute_process(
+        COMMAND ${GIT_EXECUTABLE} describe --tags --abbrev=0
+        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+        OUTPUT_VARIABLE GIT_TAG
+        OUTPUT_STRIP_TRAILING_WHITESPACE
+    )
+else()
+    set(GIT_TAG "v0.0.0")
+endif()
+
+string(REGEX REPLACE "^v" "" PROJECT_VERSION "${GIT_TAG}")
+
+project(MineSweeper
+        VERSION ${PROJECT_VERSION}
+        LANGUAGES C)
+
+message(STATUS "Building MineSweeper version ${PROJECT_VERSION}")
 
 set(CMAKE_C_STANDARD 11)
 
@@ -19,6 +40,12 @@ set(RESOURCES_C "${CMAKE_CURRENT_SOURCE_DIR}/src/resources.c")
 #     DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/resources/resources.gresource.xml
 #     COMMENT "Compiling GResources..."
 # )
+
+configure_file(
+    ${CMAKE_SOURCE_DIR}/include/version.h.in
+    ${CMAKE_BINARY_DIR}/generated/version.h
+    @ONLY
+)
 
 # --- Timer library ---
 add_library(timer STATIC src/timer/timer.c)
@@ -62,6 +89,7 @@ add_executable(MineSweeper
 target_include_directories(MineSweeper PRIVATE
     src
     include
+    ${CMAKE_BINARY_DIR}/generated
     ${GTK4_INCLUDE_DIRS}
 )
 

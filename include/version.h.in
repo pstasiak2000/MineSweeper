@@ -1,0 +1,3 @@
+#pragma once
+
+#define MINESWEEPER_VERSION "@PROJECT_VERSION@"

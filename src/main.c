@@ -2,6 +2,8 @@
 
 // #include <timer/timer.h>
 
+#include "version.h"
+
 #include "app_ctx.h"
 #include "actions.h"
 #include "base.h"
@@ -23,9 +25,13 @@ static void activate(GtkApplication *app, gpointer user_data) {
         "/com/github/pstasiak2000/minesweeper/style.css"
     );
 
+    /* Title buffer for window name based on game version*/
+    char buf[32];
+    snprintf(buf,sizeof(buf),"MineSweeper v%s", MINESWEEPER_VERSION);
+
     GtkWidget *window = gtk_application_window_new(app);
     ui->window = window;
-    gtk_window_set_title(GTK_WINDOW(window), "MineSweeper v1.0");
+    gtk_window_set_title(GTK_WINDOW(window), buf);
     gtk_window_set_default_size(GTK_WINDOW(window), 900, 900);
 
     GtkWidget *main_vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
