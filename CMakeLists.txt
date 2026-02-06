@@ -1,8 +1,13 @@
+set(CMAKE_C_STANDARD 11)
 cmake_minimum_required(VERSION 3.10)
 
-find_package(Git QUIET)
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(GTK4 REQUIRED gtk4)
 
-### --- VERSIONING FROM GIT --- 
+
+### --- VERSIONING FROM GIT ---
+find_package(Git QUIET)
+ 
 if(GIT_FOUND)
     execute_process(
         COMMAND ${GIT_EXECUTABLE} describe --tags --abbrev=0
@@ -14,7 +19,9 @@ else()
     set(GIT_TAG "v0.0.0")
 endif()
 
+### -- Set the project version and date strings
 string(REGEX REPLACE "^v" "" PROJECT_VERSION "${GIT_TAG}")
+string(TIMESTAMP PROJECT_DATE "%Y-%m-%d")
 
 project(MineSweeper
         VERSION ${PROJECT_VERSION}
@@ -22,10 +29,6 @@ project(MineSweeper
 
 message(STATUS "Building MineSweeper version ${PROJECT_VERSION}")
 
-set(CMAKE_C_STANDARD 11)
-
-find_package(PkgConfig REQUIRED)
-pkg_check_modules(GTK4 REQUIRED gtk4)
 
 # Use pre-generated resources.c in src/
 set(RESOURCES_C "${CMAKE_CURRENT_SOURCE_DIR}/src/resources.c")
@@ -109,8 +112,14 @@ install(FILES
 )
 
 ### --- Install AppStream metadata ---
+configure_file(
+    ${CMAKE_SOURCE_DIR}/data/org.example.MineSweeper.appdata.xml.in
+    ${CMAKE_BINARY_DIR}/org.example.MineSweeper.appdata.xml
+    @ONLY
+)
+
 install(FILES
-    ${CMAKE_SOURCE_DIR}/data/org.example.MineSweeper.appdata.xml
+    ${CMAKE_BINARY_DIR}/org.example.MineSweeper.appdata.xml
     DESTINATION share/metainfo
 )
 
