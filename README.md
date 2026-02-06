@@ -2,6 +2,19 @@
 
 ## Installation
 
+### Archlinux
+
+On Arch Linux, build and install:
+
+```bash
+git clone https://github.com/pstasiak2000/MineSweeper.git
+cd MineSweeper
+cp packaging/arch/PKGBUILD .
+makepkg -si
+```
+
+
+
 ### Compiling from source code
 
 #### Configure CMake
