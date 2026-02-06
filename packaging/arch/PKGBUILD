@@ -11,6 +11,7 @@ source=(
   "$pkgname-$pkgver::file://$srcdir/../" 
 )
 noextract=()
+sha256sums=('SKIP')
 
 build() {
     cmake -S "$srcdir/$pkgname-$pkgver" \
