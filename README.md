@@ -38,3 +38,94 @@ makepkg -si
 > Note: The PKGBUILD assumes the repository layout is unchanged. Moving files or directories may cause build failures.
 
 After installation, MineSweeper will be available as a standard application and should appear in your desktop environment’s application menu.
+
+## Compiling from source
+
+If you prefer to build directly from source, follow these steps:
+
+### 1. Configure the project with CMake
+
+```bash
+# Clean previous builds
+rm -rf build
+
+# Configure the build directory
+cmake -B build -S . -DCMAKE_INSTALL_PREFIX=/usr
+```
+
+### 2. Build the project
+
+```bash
+cmake --build build
+```
+
+This will compile all source files and generate the MineSweeper executable in the build directory.
+
+### 3. Install the project
+
+#### * To install to the default systems directories:
+
+```bash
+sudo cmake --install build
+```
+
+#### * To install to a custom directory (useful for staging or packaging):
+
+```bash
+DESTDIR=/path/to/install cmake --install build
+```
+
+
+## Post-install notes
+* The application installs a ```.desktop``` file, so it should integrate with most Linux desktop environments automatically.
+* Icons are installed in standard locations (```/usr/share/icons/hicolor/...```) and should appear in menus and window decorations.
+* If you’re running KDE, you may need to refresh the application cache:
+```bash
+kbuildsycoca5
+```
+* To uninstall:
+    + If installed via PKGBUILD:
+    
+    ```bash
+        sudo pacman -R minesweeper
+    ```
+
+    + If installed manually: remove the installed files in ```/usr/bin```, ```/usr/share/applications/```, ```/usr/share/icons/```, and ```/usr/share/metainfo/```.
+
+
+## Dependencies
+
+* GTK4
+* librsvg
+* glib2 (for building)
+* cmake (for building)
+* pkgconf (for building)
+
+## Troubleshooting
+
+* **CMAKE cannot find** ```CMakeLists.txt```**:**
+Make sure you run ``` cmake -S .``` from the **repository root**, not from ```src/``` or any other subdirectory.
+
+* **Resources errors (** ```resources.c```, ```.gresource.xml```, ```.png``` **/** ```.svg``` **missing):**
+Ensure that ```resources.c``` is generated or included in ```src/``` and that the paths in ```resources.gresource.xml``` are correct relative to the repository root.
+
+* **PKGBUILD build errors with local sources:**
+Use ```source=("file://../")``` if the PKGBUILD is in a subdirectory, pointing to the repository root.
+
+This ensures ```$srcdir``` resolves correctly.
+
+* **Application icon not showing in KDE:**
+Refresh the application cache:
+
+```bash
+kbuildsycoca5
+```
+
+* **General build errors:**
+Make sure all dependencies (```gtk4```, ```librsvg```,```glib2```,```cmake```,```pkgconf```) are installed.
+
+Clean your build directory if necessary:
+
+```bash
+rm -rf build
+```
