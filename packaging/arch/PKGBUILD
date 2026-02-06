@@ -1,6 +1,6 @@
 # Maintainer: Piotr Stasiak <peter.mutd@googlemail.com>
 pkgname=minesweeper
-pkgver=1.0           # will be overridden by pkgver() function if needed
+pkgver=1.0
 pkgrel=1
 pkgdesc="Simple Minesweeper clone implemented in C using GTK4"
 arch=('x86_64')
@@ -8,20 +8,15 @@ url="https://github.com/pstasiak2000/MineSweeper"
 license=('MIT')
 depends=('gtk4' 'librsvg')
 makedepends=('cmake' 'pkgconf' 'glib2')
-source=()
-#source=("https://github.com/pstasiak2000/MineSweeper/archive/refs/tags/v${pkgver}.tar.gz")
-#sha256sums=('SKIP')  # replace with actual sha256sum for release tarball
-
-# Optional: auto-update pkgver from git tag
-# pkgver() {
-#     cd "$srcdir/MineSweeper"
-#     git describe --tags | sed 's/^v//'
-# }
+source=()   # building from local source
 
 build() {
+    # Build inside a separate directory
     mkdir -p build
     cd build
-    cmake -DCMAKE_INSTALL_PREFIX=/usr ..
+
+    # Use the directory containing CMakeLists.txt as source
+    cmake -DCMAKE_INSTALL_PREFIX=/usr "$srcdir"
     make
 }
 
@@ -29,4 +24,5 @@ package() {
     cd build
     make DESTDIR="$pkgdir" install
 }
+
 
