@@ -8,6 +8,8 @@ cmake-build-*/
 out/
 pkg/
 
+obj-x86_64-linux-gnu/
+
 # =========================
 # CMake generated files
 # =========================
