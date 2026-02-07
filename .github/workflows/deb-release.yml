@@ -3,68 +3,67 @@ name: Build and Release .deb
 on:
   push:
     tags:
-      - 'v*'  # Trigger on tags like v1.0.1
+      - 'v*'  # Trigger workflow on tags like v1.0.1
 
 jobs:
   build-deb:
     runs-on: ubuntu-latest
 
-    env:
-      DEB_ARCH: amd64
-
     steps:
-      # 1. Checkout code
+      # 1. Checkout the repo
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # 2. Install build dependencies
+      # 2. Install dependencies
       - name: Install dependencies
         run: |
           sudo apt update
           sudo apt install -y build-essential cmake pkg-config \
-            libgtk-4-dev librsvg2-dev dh-make debhelper
+            libgtk-4-dev librsvg2-dev dh-make debhelper devscripts
 
-      # 3. Extract version from tag (remove leading 'v')
-      - name: Set version
+      # 3. Determine version from git tag
+      - name: Set version from git tag
         id: version
-        run: |
-          echo "VERSION=${GITHUB_REF_NAME#v}" >> $GITHUB_ENV
+        run: echo "VERSION=${GITHUB_REF_NAME#v}" >> $GITHUB_ENV
 
-      # 4. Build project
-      - name: Build project
+      # 4. Copy Debian packaging files
+      - name: Prepare Debian folder
+        run: |
+          rm -rf debian
+          cp -r packaging/debian debian
+
+      # 5. Update changelog automatically
+      - name: Update changelog
+        run: |
+          if [ -f debian/changelog ]; then
+            dch --newversion "${VERSION}-1" "Automatic build from git tag ${VERSION}" --force-distribution
+          else
+            dch --create -v "${VERSION}-1" --package minesweeper \
+                "Automatic build from git tag ${VERSION}" --force-distribution
+          fi
+
+      # 6. Build project
+      - name: Build CMake project
         run: |
           rm -rf build
           cmake -B build -S . -DCMAKE_INSTALL_PREFIX=/usr
           cmake --build build
 
-      # 5. Install files into a staging directory for .deb packaging
-      - name: Prepare Debian package
+      # 7. Install files into staging directory for .deb
+      - name: Prepare staging directory
         run: |
           mkdir -p debian-install/usr
           cmake --install build --prefix=$(pwd)/debian-install/usr
-
-          # Copy extra metadata
-          mkdir -p debian-install/usr/share/applications
-          cp data/org.example.MineSweeper.desktop debian-install/usr/share/applications/
-
-          mkdir -p debian-install/usr/share/metainfo
-          cp data/org.example.MineSweeper.appdata.xml debian-install/usr/share/metainfo/
-
-          mkdir -p debian-install/usr/share/icons/hicolor/scalable/apps
-          cp resources/icons/org.example.MineSweeper.svg debian-install/usr/share/icons/hicolor/scalable/apps/
-
-          mkdir -p debian-install/usr/share/icons/hicolor/64x64/apps
-          cp resources/icons/org.example.MineSweeper.png debian-install/usr/share/icons/hicolor/64x64/apps/
-
-      # 6. Build the .deb package
-      - name: Build .deb package
+          
+      # 8. Build .deb package
+      - name: Build .deb
         run: |
-          DEB_FILE="minesweeper_${VERSION}_${DEB_ARCH}.deb"
+          DEB_FILE="minesweeper_${VERSION}_amd64.deb"
           dpkg-deb --build debian-install "$DEB_FILE"
           echo "DEB_FILE=$DEB_FILE" >> $GITHUB_ENV
 
-      # 7. Upload .deb to GitHub Release
-      - name: Create GitHub Release
+      # 9. Upload .deb to GitHub Release
+      - name: Upload .deb to GitHub Release
         uses: ncipollo/release-action@v1
         with:
           tag_name: ${{ github.ref_name }}
