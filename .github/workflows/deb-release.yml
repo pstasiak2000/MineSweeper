@@ -31,20 +31,20 @@ jobs:
           chmod +x ./scripts/build-deb.sh
           ./scripts/build-deb.sh
 
-      # 4. Find the generated .deb file
       - name: Find .deb
         id: debfile
         run: |
-          mv ../*.deb .
           DEB=$(find .. -maxdepth 1 -type f -name "minesweeper_*.deb" | head -n1)
-          echo "DEB_FILE=$DEB" >> $GITHUB_ENV
+          echo "DEB_PATH=$DEB" >> $GITHUB_ENV
+          BASENAME=$(basename "$DEB")
+          echo "DEB_FILE=$BASENAME" >> $GITHUB_ENV
           echo "Found .deb: $DEB"
-
-      # 5. Create GitHub Release and upload the .deb
-      - name: Upload Artifacts
+      
+      - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ env.DEB_FILE }}
-          path: |
-            *.deb
+          name: ${{ env.DEB_FILE }}       # just the filename
+          path: ${{ env.DEB_PATH }}       # full path to file
+          token: ${{ secrets.GITHUB_TOKEN}}
           if-no-files-found: error
+
