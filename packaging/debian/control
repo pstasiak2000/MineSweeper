@@ -8,6 +8,6 @@ Homepage: https://github.com/pstasiak2000/MineSweeper
 
 Package: minesweeper
 Architecture: amd64
-Depends: ${shlibs:Depends}, ${misc:Depends}, libgtk-4-1, librsvg2-2#
+Depends: ${shlibs:Depends}, ${misc:Depends}
 Description: Simple Minesweeper clone implemented in C using GTK4
  A classic Minesweeper game with GTK4 GUI and desktop integration.
