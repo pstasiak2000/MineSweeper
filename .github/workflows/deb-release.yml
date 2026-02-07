@@ -33,7 +33,8 @@ jobs:
           rm -rf debian
           mkdir debian
           cp -r packaging/debian debian
-
+          pwd
+          ls
       # 5. Update changelog automatically
       - name: Update changelog
         run: |
@@ -43,7 +44,7 @@ jobs:
             dch --create -v "${VERSION}-1" --package minesweeper \
                 "Automatic build from git tag ${VERSION}" --force-distribution
           fi
-
+          ls debian/
       # 6. Build project
       - name: Build CMake project
         run: |
