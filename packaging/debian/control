@@ -1,0 +1,13 @@
+Source: minesweeper
+Section: games
+Priority: optional
+Maintainer: Piotr Stasiak <peter.mutd@googlemail.com>
+Build-Depends: cmake, pkg-config, libgtk-4-dev, librsvg2-dev
+Standards-Version: 4.5.0
+Homepage: https://github.com/pstasiak2000/MineSweeper
+
+Package: minesweeper
+Architecture: amd64
+Depends: ${shlibs:Depends}, ${misc:Depends}, libgtk-4-1, librsvg2-2#
+Description: Simple Minesweeper clone implemented in C using GTK4
+ A classic Minesweeper game with GTK4 GUI and desktop integration.

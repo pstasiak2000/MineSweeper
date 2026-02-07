@@ -1,0 +1,5 @@
+build/MineSweeper usr/bin/
+data/org.example.MineSweeper.desktop usr/share/applications/
+resources/icons/org.example.MineSweeper.svg usr/share/icons/hicolor/scalable/apps/
+resources/icons/org.example.MineSweeper.png usr/share/icons/hicolor/64x64/apps/
+data/org.example.MineSweeper.appdata.xml usr/share/metainfo/
