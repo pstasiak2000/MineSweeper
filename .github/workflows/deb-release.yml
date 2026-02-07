@@ -1,6 +1,7 @@
 name: Build and Release .deb
 
 on:
+  workflow_dispatch:    
   push:
     tags:
       - 'v*'  # Trigger workflow on tags like v1.0.1
