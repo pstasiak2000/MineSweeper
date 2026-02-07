@@ -32,9 +32,9 @@ jobs:
         run: |
           rm -rf debian
           mkdir debian
-          cp -r packaging/debian debian
-          pwd
-          ls
+          cp -r packaging/debian/* debian/
+          ls debian/
+          
       # 5. Update changelog automatically
       - name: Update changelog
         run: |
