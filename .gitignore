@@ -2,6 +2,8 @@
 # Build directories
 # =========================
 build/
+debian/
+pkg/
 cmake-build-*/
 out/
 pkg/
