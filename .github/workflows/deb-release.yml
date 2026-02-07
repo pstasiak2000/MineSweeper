@@ -34,8 +34,9 @@ jobs:
       - name: Find .deb
         id: debfile
         run: |
-          mv ../*.deb .
-          DEB=$(find .. -maxdepth 1 -type f -name "minesweeper_*.deb" | head -n1)
+          mv ../*.deb
+          ls *.deb
+          DEB=$(find .. -maxdepth 1 -type f -name "*.deb" | head -n1)
           echo "DEB_PATH=$DEB" >> $GITHUB_ENV
           BASENAME=$(basename "$DEB")
           echo "DEB_FILE=$BASENAME" >> $GITHUB_ENV
@@ -45,6 +46,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ${{ env.DEB_FILE }}       # just the filename
-          path: ${{ env.DEB_PATH }}       # full path to file
+          path: |       # full path to file
+            *.deb
           if-no-files-found: error
 
