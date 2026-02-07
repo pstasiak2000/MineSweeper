@@ -11,65 +11,33 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Checkout the repo
+      # 1. Checkout the repository
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # 2. Install dependencies
-      - name: Install dependencies
+      # 2. Install Debian packaging and build dependencies
+      - name: Install build dependencies
         run: |
           sudo apt update
           sudo apt install -y build-essential cmake pkg-config \
-            libgtk-4-dev librsvg2-dev dh-make debhelper devscripts
+            libgtk-4-dev librsvg2-dev debhelper dh-make devscripts fakeroot
 
-      # 3. Determine version from git tag
-      - name: Set version from git tag
-        id: version
-        run: echo "VERSION=${GITHUB_REF_NAME#v}" >> $GITHUB_ENV
+      # 3. Run your Debian build script
+      - name: Build Debian package
+        run: |
+          chmod +x ./scripts/build-deb.sh
+          ./scripts/build-deb.sh
 
-      # 4. Copy Debian packaging files
-      - name: Prepare Debian folder
+      # 4. Find the generated .deb file
+      - name: Find .deb
+        id: debfile
         run: |
-          rm -rf debian
-          mkdir -p debian
-          cp -r packaging/debian/* debian/
-          ls debian
-          
-      # 5. Update changelog automatically
-      - name: Update changelog
-        run: |
-          if [ -f debian/changelog ]; then
-            dch --newversion "${VERSION}-1" "Automatic build from git tag ${VERSION}" --force-distribution
-          else
-            dch --create -v "${VERSION}-1" --package minesweeper \
-                "Automatic build from git tag ${VERSION}" --force-distribution
-          fi
-          ls debian/
-      # 6. Build project
-      - name: Build CMake project
-        run: |
-          rm -rf build
-          cmake -B build -S . -DCMAKE_INSTALL_PREFIX=/usr
-          cmake --build build
+          DEB=$(find .. -maxdepth 1 -type f -name "minesweeper_*.deb" | head -n1)
+          echo "DEB_FILE=$DEB" >> $GITHUB_ENV
+          echo "Found .deb: $DEB"
 
-      # 7. Install files into staging directory for .deb
-      - name: Prepare staging directory
-        run: |
-          mkdir -p debian-install/usr
-          cmake --install build --prefix=$(pwd)/debian-install/usr
-          
-      # 8. Build .deb package
-      - name: Build .deb
-        run: |
-          DEB_FILE="minesweeper_${VERSION}_amd64.deb"
-          mkdir -p debian-install/DEBIAN
-          cp -r debian/* debian-install/DEBIAN/
-          ls debian-install/DEBIAN
-          dpkg-deb --build debian-install "$DEB_FILE"
-          echo "DEB_FILE=$DEB_FILE" >> $GITHUB_ENV
-
-      # 9. Upload .deb to GitHub Release
-      - name: Upload .deb to GitHub Release
+      # 5. Create GitHub Release and upload the .deb
+      - name: Create GitHub Release
         uses: ncipollo/release-action@v1
         with:
           tag_name: ${{ github.ref_name }}
