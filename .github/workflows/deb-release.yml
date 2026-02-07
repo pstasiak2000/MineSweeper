@@ -1,43 +1,29 @@
 name: Build and Release .deb
 
 on:
-  workflow_dispatch:
+  workflow_dispatch:    
   push:
     tags:
-      - 'v*'
+      - 'v*'  # Trigger workflow on tags like v1.0.1
 
 jobs:
   build-deb:
-    strategy:
-      matrix:
-        ubuntu: [22.04, 24.04]
-
     runs-on: ubuntu-latest
-
-    container:
-      image: ubuntu:${{ matrix.ubuntu }}
 
     steps:
       # 1. Checkout the repository
       - name: Checkout repository
         uses: actions/checkout@v3
         with:
-          fetch-depth: 0
+          fetch-depth: 0  # Fetch all history and tags
+
 
       # 2. Install Debian packaging and build dependencies
       - name: Install build dependencies
         run: |
-          apt update
-          apt install -y \
-            build-essential \
-            cmake \
-            pkg-config \
-            libgtk-4-dev \
-            librsvg2-dev \
-            debhelper \
-            dh-make \
-            devscripts \
-            fakeroot
+          sudo apt update
+          sudo apt install -y build-essential cmake pkg-config \
+            libgtk-4-dev librsvg2-dev debhelper dh-make devscripts fakeroot
 
       # 3. Run your Debian build script
       - name: Build Debian package
@@ -45,20 +31,21 @@ jobs:
           chmod +x ./scripts/build-deb.sh
           ./scripts/build-deb.sh
 
-      # 4. Collect .deb
       - name: Find .deb
+        id: debfile
         run: |
           mv ../*.deb .
-          for f in *.deb; do
-            mv "$f" "${f%.deb}_ubuntu${{ matrix.ubuntu }}.deb"
-          done
-          ls -l *.deb
-
-      # 5. Upload Artifact
+          ls *.deb
+          DEB=$(find . -maxdepth 1 -type f -name "minesweeper_*.deb" | head -n1)
+          echo "DEB_PATH=$DEB" >> $GITHUB_ENV
+          BASENAME=$(basename "$DEB")
+          echo "DEB_FILE=$BASENAME" >> $GITHUB_ENV
+          echo "Found .deb: $DEB"
+      
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: minesweeper_ubuntu${{ matrix.ubuntu }}
-          path: |
+          name: ${{ env.DEB_FILE }}       # just the filename
+          path: |       # full path to file
             *.deb
           if-no-files-found: error
