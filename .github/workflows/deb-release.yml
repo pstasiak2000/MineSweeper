@@ -43,5 +43,6 @@ jobs:
       - name: Create GitHub Release
         uses: ncipollo/release-action@v1
         with:
-          tag_name: ${{ github.ref_name }}
-          files: ${{ env.DEB_FILE }}
+          tag: ${{ github.ref_name }}
+          artifacts: ${{ env.DEB_FILE }}
+          generateReleaseNotes: false
