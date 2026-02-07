@@ -62,7 +62,9 @@ jobs:
       - name: Build .deb
         run: |
           DEB_FILE="minesweeper_${VERSION}_amd64.deb"
-          cp -r debian debian-install/debian
+          mkdir -p debian-install/DEBIAN
+          cp -r debian/* debian-install/DEBIAN/
+          ls debian-install/DEBIAn
           dpkg-deb --build debian-install "$DEB_FILE"
           echo "DEB_FILE=$DEB_FILE" >> $GITHUB_ENV
 
