@@ -31,9 +31,9 @@ jobs:
       - name: Prepare Debian folder
         run: |
           rm -rf debian
-          mkdir debian
+          mkdir -p debian
           cp -r packaging/debian/* debian/
-          ls debian/
+          ls debian
           
       # 5. Update changelog automatically
       - name: Update changelog
@@ -62,6 +62,7 @@ jobs:
       - name: Build .deb
         run: |
           DEB_FILE="minesweeper_${VERSION}_amd64.deb"
+          cp -r debian debian-install/debian
           dpkg-deb --build debian-install "$DEB_FILE"
           echo "DEB_FILE=$DEB_FILE" >> $GITHUB_ENV
 
