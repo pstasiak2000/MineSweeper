@@ -31,6 +31,7 @@ jobs:
       - name: Prepare Debian folder
         run: |
           rm -rf debian
+          mkdir debian
           cp -r packaging/debian debian
 
       # 5. Update changelog automatically
