@@ -1,0 +1,50 @@
+name: Build and Release .deb
+
+on:
+  push:
+    tags:
+      - 'v*'   # triggers on any tag like v1.0.1
+
+jobs:
+  build-deb:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Checkout repo
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # 2. Set up dependencies for building .deb
+      - name: Install build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            build-essential cmake pkg-config \
+            libgtk-4-dev librsvg2-dev debhelper dh-make
+
+      # 3. Build the project with CMake
+      - name: Build project
+        run: |
+          mkdir build
+          cd build
+          cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr ..
+          cmake --build .
+
+      # 4. Install into a staging directory
+      - name: Install to staging dir
+        run: |
+          DESTDIR=$PWD/debian-install cmake --install build
+
+      # 5. Create the .deb package
+      - name: Build Debian package
+        run: |
+          mkdir -p debian
+          cp -r packaging/debian/* debian/
+          dpkg-deb --build debian-install debian/minesweeper_${GITHUB_REF_NAME#v}_amd64.deb
+
+      # 6. Upload .deb to GitHub Release
+      - name: Create GitHub Release
+        uses: ncipollo/release-action@v1
+        with:
+          tag: ${{ github.ref_name }}
+          files: debian/minesweeper_${{ github.ref_name#v }}_amd64.deb
