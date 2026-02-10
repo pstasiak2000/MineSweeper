@@ -41,11 +41,20 @@ jobs:
           BASENAME=$(basename "$DEB")
           echo "DEB_FILE=$BASENAME" >> $GITHUB_ENV
           echo "Found .deb: $DEB"
-      
-      - name: Upload Artifact
-        uses: actions/upload-artifact@v4
+
+      - name: Upload .deb to GitHub Release
+        uses: softprops/action-gh-release@v2
         with:
-          name: ${{ env.DEB_FILE }}       # just the filename
-          path: |       # full path to file
+          files: |
             *.deb
-          if-no-files-found: error
+          fail_on_unmatched_files: true
+          overwrite: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # - name: Upload Artifact
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: ${{ env.DEB_FILE }}       # just the filename
+      #     path: |       # full path to file
+      #       *.deb
+      #     if-no-files-found: error
