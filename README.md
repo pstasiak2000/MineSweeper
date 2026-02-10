@@ -42,7 +42,7 @@ Now from repo root, run the build script
 This will create a ```minesweeper_X.Y.Z-1_amd64.deb``` in the parent directory. You can now install the application with
 
 ```bash
-
+  sudo apt install ./minesweeper_X.Y.Z-1_amd64.deb
 ```
 
 ### Arch Linux
