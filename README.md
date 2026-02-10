@@ -1,5 +1,5 @@
 # MineSweeper
-[![Latest Build](https://github.com/pstasiak2000/MineSweeper/actions/workflows/deb-release.yml/badge.svg)](https://github.com/pstasiak2000/MineSweeper/releases/latest)
+[![Build](https://github.com/pstasiak2000/MineSweeper/actions/workflows/deb-release.yml/badge.svg)](https://github.com/pstasiak2000/MineSweeper/releases/latest)
 
 MineSweeper is a simple Minesweeper clone implemented in C using GTK4.  
 It provides a classic Minesweeper experience with a modern GTK4 interface, and is designed to run on Linux systems.
