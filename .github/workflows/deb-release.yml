@@ -5,6 +5,9 @@ on:
   push:
     tags:
       - 'v*'  # Trigger workflow on tags like v1.0.1
+      
+permissions:
+  contents: write
 
 jobs:
   build-deb:
