@@ -11,6 +11,7 @@ It provides a classic Minesweeper experience with a modern GTK4 interface, and i
 
 - [Installation](#installation)
   - [Arch Linux](#arch-linux)
+  - [Ubuntu/Debian](#debian)
   - [Compiling from Source](#compiling-from-source)
 - [Post-install Notes](#post-install-notes)
 - [Dependencies](#dependencies)
@@ -19,6 +20,30 @@ It provides a classic Minesweeper experience with a modern GTK4 interface, and i
 ---
 
 ## Installation
+
+### Ubuntu/Debian
+
+For new versions of Ubuntu (Ubuntu 23.0 or newer) you can use the build and release .deb package (follow the Build and Release .deb status badge above).
+
+For older versions of Ubuntu, you will need to build the .deb package first. The script is provided in ```/scripts/build-deb.sh```.
+
+Firstly make sure the relevant dependencies are installed:
+
+```bash
+  sudo apt update
+  sudo apt install libgtk-4-dev librsvg2-dev devscripts debhelper dh-cmake 
+```
+Now from repo root, run the build script 
+
+```bash
+./scripts/build-deb.sh
+```
+
+This will create a ```minesweeper_X.Y.Z-1_amd64.deb``` in the parent directory. You can now install the application with
+
+```bash
+
+```
 
 ### Arch Linux
 

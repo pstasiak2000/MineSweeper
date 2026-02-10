@@ -1,4 +1,4 @@
-#include <gtk/gtk.h>
+
 
 // #include <timer/timer.h>
 
@@ -92,7 +92,7 @@ int main(int argc, char **argv) {
     srand(time(NULL));  // Seed RNG with current tim
 
     GtkApplication *app =
-        gtk_application_new("com.example.menu", G_APPLICATION_DEFAULT_FLAGS);
+        gtk_application_new("com.example.menu", G_APPLICATION_FLAGS_NONE);
 
     Game game = { .difficulty = "easy", .mines = 10, .grid_size={10,10}, .status=GAME_PLAYING};
     GameUI ui = {0};
