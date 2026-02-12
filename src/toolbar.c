@@ -8,6 +8,7 @@ GMenuModel *create_menu(void) {
     /* File Menu*/
     GMenu *file = g_menu_new();
     g_menu_append(file, "New", "app.New");
+    g_menu_append(file, "Solve", "app.Solve");
     g_menu_append(file, "Quit", "app.Quit");
     g_menu_append_submenu(menubar, "File", G_MENU_MODEL(file));
 

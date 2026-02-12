@@ -2,7 +2,6 @@
 #define GAME_ENGINE_H
 
 #include <gtk/gtk.h>
-#include "../timer/timer.h"
 
 #define MINES_EASY 10
 #define MINES_MEDIUM 40

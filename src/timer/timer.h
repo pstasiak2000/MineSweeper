@@ -25,4 +25,10 @@ void timer_reset(Timer *timer);
 /* Stop the timer completely */
 void timer_stop(Timer *timer);
 
+/* Get minutes from elapsed time */
+uint get_seconds(Timer *timer);
+
+/* Get seconds from elapsed time */
+uint get_minutes(Timer *timer);
+
 #endif

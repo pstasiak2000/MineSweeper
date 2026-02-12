@@ -47,3 +47,13 @@ void timer_stop(Timer *timer) {
     timer_pause(timer);
     timer_reset(timer);
 }
+
+uint get_seconds(Timer *timer){
+    uint seconds = timer->total_seconds % 60;
+    return seconds;
+}
+
+uint get_minutes(Timer *timer){
+    uint minutes = timer->total_seconds / 60;
+    return minutes;
+}

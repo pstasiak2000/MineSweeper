@@ -12,7 +12,7 @@ void update_mine_labels(Game *game){
             if(block->mine)
                 snprintf(buf,sizeof(buf),"💣");
             else if(!block->val)
-                snprintf(buf,sizeof(buf),"");
+                snprintf(buf,sizeof(buf)," ");
             else
                 snprintf(buf,sizeof(buf),"%d",block->val);
             
@@ -24,9 +24,9 @@ void update_mine_labels(Game *game){
 
 static int select_minimum_box_size(const char *level){
     if(strcmp(level,"easy") == 0)
-        return 40;
+        return 50;
     else if(strcmp(level,"medium") == 0)
-        return 30;
+        return 40;
     else if(strcmp(level,"hard") == 0)
         return 10;
     else
@@ -100,7 +100,7 @@ static void reveal_all_mines(GameGrid *grid){
     }
 }
 
-static void reveal_all_blocks(GameGrid *grid){
+void reveal_all_blocks(GameGrid *grid){
     for (int row = 0; row < grid->size; row++) {
         for (int col = 0; col < grid->rows[0].size; col++) { 
             grid->rows[row].cols[col].active = FALSE;  
@@ -120,10 +120,16 @@ static int check_win_status(GameGrid *grid){
             /* Check if all mines have been covered with a flag*/
             if(block->mine && !block->is_flag)
                 return 0;
+            
+            /* Check if all non-mines have been revealed */
+            // GtkWidget *visible = gtk_stack_get_visible_child(GTK_STACK(block->stack));
+            // if(!block->mine && visible == "button")
+            //     return 0;
         }
     }    
     return 1;
 }
+
 
 static void on_cell_clicked(GtkButton *button, gpointer user_data)
 {
@@ -148,10 +154,19 @@ static void on_cell_clicked(GtkButton *button, gpointer user_data)
         timer_pause(&ctx->timer);
         game->status = GAME_LOST;
     } else if(check_win_status(game->grid)) { 
-        g_print("Congratulations - You won!!!\n");
-        reveal_all_blocks(game->grid);
-        timer_pause(&ctx->timer);
-        game->status = GAME_WON;
+        // g_print("Congratulations - You won!!!\n");
+        // reveal_all_blocks(game->grid);
+        // timer_pause(&ctx->timer);
+        // game->status = GAME_WON;
+
+        // // Message box;
+        // char popup_title[8] = "You win!";
+        // char popup_message[128];
+        // snprintf(popup_message, sizeof(popup_message),
+        //     "Congratulations! You completed the puzzle in %02d:%02d",0,0);
+        
+        // quick_message(GTK_WINDOW(ctx->ui->window), popup_title, popup_message);
+
     }  else {
         reveal_block(game->grid, block->row, block->col);
     }
@@ -187,10 +202,25 @@ static void on_cell_right_clicked(GtkGestureClick *gesture,
     snprintf(buf,sizeof(buf),"💣: %d", game->mines);
     
     update_label_text(ui->mines.label,buf);
-    // gtk_label_set_text(GTK_LABEL(ctx->ui->mines.label), buf);
+    gtk_label_set_text(GTK_LABEL(ctx->ui->mines.label), buf);
 
     gtk_stack_set_visible_child_name(GTK_STACK(block->stack),
                                      block->is_flag ? "flag_label" : "button");
+
+    if(check_win_status(game->grid)) { 
+    //   g_print("Congratulations - You won!!!\n");
+    //     reveal_all_blocks(game->grid);
+    //     timer_pause(&ctx->timer);
+    //     game->status = GAME_WON;
+
+    //     // Message box;
+    //     char popup_title[8] = "You win!";
+    //     char popup_message[128];
+    //     snprintf(popup_message, sizeof(popup_message),
+    //         "Congratulations! You completed the puzzle in %02d:%02d",0,0);
+        
+    //     quick_message(GTK_WINDOW(ctx->ui->window), popup_title, popup_message);
+    }
 }
 
 void reset_visibility(Game *game){
@@ -233,7 +263,7 @@ void generate_gtk_grid(GtkWidget *grid, AppCtx *ctx) {
             if (block->mine)
                 snprintf(buf, sizeof(buf), "💣");
             else if (!block->val)
-                snprintf(buf, sizeof(buf), "");
+                snprintf(buf, sizeof(buf), " ");
             else
                 snprintf(buf, sizeof(buf), "%d", block->val);
 

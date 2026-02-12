@@ -14,6 +14,8 @@ void action_new(GSimpleAction *action, GVariant *p, gpointer user_data) {
     char buf[32];
     snprintf(buf,sizeof(buf),"💣 %d", ctx->game->mines);
     update_label_text(ui->mines.label,buf);
+
+
     printf("New game triggered. Current difficulty is: %s\n", ctx->game->difficulty);
     
     // reset your game state here
@@ -23,7 +25,7 @@ void action_new(GSimpleAction *action, GVariant *p, gpointer user_data) {
     // Update the mine labels in the new game
     update_mine_labels(game);
 
-    print_board(game->grid);
+    // print_board(game->grid);
 }
 
 
@@ -37,6 +39,24 @@ void action_about(GSimpleAction *action, GVariant *p, gpointer user_data) {
     printf("MineSweeper GTK4  demo\n");
 }
 
+void action_solve(GSimpleAction *action, GVariant *p, gpointer user_data) {
+    AppCtx *ctx = user_data;
+    Game *game = ctx->game;
+
+    reveal_all_blocks(game->grid);
+    timer_pause(&ctx->timer);
+    char popup_title[128] = "You win!";
+    char popup_message[128];
+    sprintf(popup_message,
+         "Congratulations! You completed the puzzle in %02d:%02d"
+         ,get_minutes(&ctx->timer),get_seconds(&ctx->timer));
+
+    
+
+    quick_message(GTK_WINDOW(ctx->ui->window), popup_title, popup_message);
+}
+
+
 /* --- Callback for difficulty action --- */
 void action_difficulty(GSimpleAction *action, GVariant *p, gpointer user_data) {
     AppCtx *ctx = user_data;
@@ -45,7 +65,8 @@ void action_difficulty(GSimpleAction *action, GVariant *p, gpointer user_data) {
     Game *game = ctx->game;
 
     // Firstly confirm the change
-    if (show_reset_confirm_dialog(GTK_WINDOW(ui->window))) {
+    char text[128] = "Are you sure you want to reset the board?";
+    if (show_reset_confirm_dialog(GTK_WINDOW(ui->window),text)) {
 
         const char *level = g_variant_get_string(p, NULL);
         ctx->game->difficulty = level;
@@ -102,7 +123,8 @@ static const GActionEntry actions[] = {
         { "New",   action_new, NULL, NULL, NULL }, 
         { "Quit",  action_quit,  NULL, NULL, NULL },
         { "About", action_about, NULL, NULL, NULL },
-        { "Difficulty", action_difficulty, "s", "'easy'", NULL }
+        { "Difficulty", action_difficulty, "s", "'easy'", NULL },
+        { "Solve", action_solve, NULL, NULL, NULL }
 };
 
 /* Getter for external use*/

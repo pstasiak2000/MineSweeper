@@ -138,7 +138,7 @@ void set_mines(int mines, GameGrid *grid) {
         }
     }
 
-    print_board(grid);
+    // print_board(grid);
 }
 
 
