@@ -6,6 +6,9 @@
 // Global provider
 extern GtkCssProvider *provider;
 
+// Set the developer tools 
+extern gboolean developer_tools;
+
 typedef struct {
     GtkWidget *box;
     GtkWidget *label;

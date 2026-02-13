@@ -40,7 +40,7 @@ static void activate(GtkApplication *app, gpointer user_data) {
 
     /* Menu bar widget */
     GtkWidget *menubar =
-        gtk_popover_menu_bar_new_from_model(create_menu());
+        gtk_popover_menu_bar_new_from_model(create_menu(ctx));
     gtk_box_append(GTK_BOX(main_vbox), menubar);
 
     /* Header box for timer and number of mines */

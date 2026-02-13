@@ -3,10 +3,8 @@
 
 #include <gtk/gtk.h>
 
+#include "app_ctx.h"
 
-
-GActionEntry create_actions(void);
-
-GMenuModel *create_menu(void);
+GMenuModel *create_menu(AppCtx *ctx);
 
 #endif

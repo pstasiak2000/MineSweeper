@@ -2,6 +2,8 @@
 
 GtkCssProvider *provider;
 
+gboolean developer_tools = FALSE;
+
 /*****************************************/
 /*   UI Generation                      */
 /*****************************************/
@@ -115,12 +117,7 @@ gboolean show_reset_confirm_dialog(GtkWindow *parent, const char *text)
 
 void quick_message(GtkWindow *parent, char *title, char *message)
 {
-    gtk_style_context_add_provider_for_display(
-    gdk_display_get_default(),
-    GTK_STYLE_PROVIDER(provider),
-    GTK_STYLE_PROVIDER_PRIORITY_USER
-    );
-    
+
     GtkWidget *dialog, *label, *content_area;
     GtkDialogFlags flags;
 
@@ -137,6 +134,13 @@ void quick_message(GtkWindow *parent, char *title, char *message)
 
     content_area = gtk_dialog_get_content_area(GTK_DIALOG(dialog));
     label = gtk_label_new(message);
+
+    // Assuming provider is already loaded globally
+    GtkStyleContext *ctx = gtk_widget_get_style_context(label);
+    gtk_style_context_add_provider(ctx,
+        GTK_STYLE_PROVIDER(provider),
+        GTK_STYLE_PROVIDER_PRIORITY_USER);
+
 
     gtk_label_set_wrap(GTK_LABEL(label), TRUE);
     gtk_label_set_justify(GTK_LABEL(label), GTK_JUSTIFY_CENTER);

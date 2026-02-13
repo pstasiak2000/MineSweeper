@@ -19,6 +19,12 @@ else()
     set(GIT_TAG "v0.0.0")
 endif()
 
+configure_file(
+    ${CMAKE_SOURCE_DIR}/include/version.h.in
+    ${CMAKE_BINARY_DIR}/generated/version.h
+    @ONLY
+)
+
 ### -- Set the project version and date strings
 string(REGEX REPLACE "^v" "" PROJECT_VERSION "${GIT_TAG}")
 string(TIMESTAMP PROJECT_DATE "%Y-%m-%d")
@@ -29,6 +35,16 @@ project(MineSweeper
 
 message(STATUS "Building MineSweeper version ${PROJECT_VERSION}")
 
+# --- Set the developer tools here --- 
+option(COMPILE_WITH_DEV_TOOLS
+    "Compile with developer tools enabled"
+    FALSE)
+
+configure_file(
+    ${CMAKE_SOURCE_DIR}/include/devtools.h.in
+    ${CMAKE_BINARY_DIR}/generated/devtools.h
+    @ONLY
+)
 
 # Use pre-generated resources.c in src/
 set(RESOURCES_C "${CMAKE_CURRENT_SOURCE_DIR}/src/resources.c")
@@ -43,12 +59,6 @@ set(RESOURCES_C "${CMAKE_CURRENT_SOURCE_DIR}/src/resources.c")
 #     DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/resources/resources.gresource.xml
 #     COMMENT "Compiling GResources..."
 # )
-
-configure_file(
-    ${CMAKE_SOURCE_DIR}/include/version.h.in
-    ${CMAKE_BINARY_DIR}/generated/version.h
-    @ONLY
-)
 
 # --- Timer library ---
 add_library(timer STATIC src/timer/timer.c)

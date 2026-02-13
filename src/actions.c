@@ -1,6 +1,7 @@
 #include "actions.h"
 
-void action_new(GSimpleAction *action, GVariant *p, gpointer user_data) {
+
+static void action_new(GSimpleAction *action, GVariant *p, gpointer user_data) {
     AppCtx *ctx = user_data;
 
     GameUI *ui = ctx->ui;
@@ -28,18 +29,7 @@ void action_new(GSimpleAction *action, GVariant *p, gpointer user_data) {
     // print_board(game->grid);
 }
 
-
-
-void action_quit(GSimpleAction *action, GVariant *p, gpointer user_data) {
-    AppCtx *ctx = user_data;  
-    g_application_quit(G_APPLICATION(ctx->app));
-}
-
-void action_about(GSimpleAction *action, GVariant *p, gpointer user_data) {
-    printf("MineSweeper GTK4  demo\n");
-}
-
-void action_solve(GSimpleAction *action, GVariant *p, gpointer user_data) {
+static void action_solve(GSimpleAction *action, GVariant *p, gpointer user_data) {
     AppCtx *ctx = user_data;
     Game *game = ctx->game;
 
@@ -56,9 +46,49 @@ void action_solve(GSimpleAction *action, GVariant *p, gpointer user_data) {
     quick_message(GTK_WINDOW(ctx->ui->window), popup_title, popup_message);
 }
 
+static void action_quit(GSimpleAction *action, GVariant *p, gpointer user_data) {
+    AppCtx *ctx = user_data;  
+    g_application_quit(G_APPLICATION(ctx->app));
+}
+
+
+static void
+action_toggle_developer_tools(GSimpleAction *action,
+                              GVariant      *parameter,
+                              gpointer      user_data)
+{
+    AppCtx *ctx = user_data;
+
+    gboolean state = 
+        g_variant_get_boolean(g_action_get_state(G_ACTION(action)));
+
+    state = !state;
+
+    g_simple_action_set_state(action, g_variant_new_boolean(state));
+
+    developer_tools = state;
+
+    g_print("Developer tools: %s\n", state ? "ON" : "OFF");
+
+    /* Enable/disable Solve action*/
+    GAction *solve = 
+        g_action_map_lookup_action(G_ACTION_MAP(ctx->app),"Solve");
+
+    if (solve)
+        g_simple_action_set_enabled(
+            G_SIMPLE_ACTION(solve), 
+            developer_tools);
+}
+
+
+
+
+static void action_about(GSimpleAction *action, GVariant *p, gpointer user_data) {
+    printf("MineSweeper GTK4  demo\n");
+}
 
 /* --- Callback for difficulty action --- */
-void action_difficulty(GSimpleAction *action, GVariant *p, gpointer user_data) {
+static void action_difficulty(GSimpleAction *action, GVariant *p, gpointer user_data) {
     AppCtx *ctx = user_data;
 
     GameUI *ui = ctx->ui;
@@ -124,7 +154,13 @@ static const GActionEntry actions[] = {
         { "Quit",  action_quit,  NULL, NULL, NULL },
         { "About", action_about, NULL, NULL, NULL },
         { "Difficulty", action_difficulty, "s", "'easy'", NULL },
-        { "Solve", action_solve, NULL, NULL, NULL }
+        { "Solve", action_solve, NULL, NULL, NULL },
+        {"developer-tools",
+         action_toggle_developer_tools,
+         NULL,
+         "false",
+         NULL
+        }
 };
 
 /* Getter for external use*/

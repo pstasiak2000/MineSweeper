@@ -79,6 +79,8 @@ rm -rf build
 # Configure the build directory
 cmake -B build -S . -DCMAKE_INSTALL_PREFIX=/usr
 ```
+If you wish to compile the source code with developer tools included, you can enable them by setting ```-DCOMPILE_WITH_DEV_TOOLS=TRUE``` during the configuration.
+
 
 ### 2. Build the project
 

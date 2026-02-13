@@ -13,10 +13,10 @@ static const char *current_difficulty = "easy";
 static const char *difficulty_levels[] = { "easy", "medium", "hard" };
 
 
-void action_new(GSimpleAction *action, GVariant *p, gpointer user_data);
-void action_quit(GSimpleAction *action, GVariant *p, gpointer user_data);
-void action_about(GSimpleAction *action, GVariant *p, gpointer user_data);
+// void action_new(GSimpleAction *action, GVariant *p, gpointer user_data);
+// void action_quit(GSimpleAction *action, GVariant *p, gpointer user_data);
+// void action_about(GSimpleAction *action, GVariant *p, gpointer user_data);
 
-void action_difficulty(GSimpleAction *action, GVariant *p, gpointer user_data);
+// void action_difficulty(GSimpleAction *action, GVariant *p, gpointer user_data);
 
 #endif

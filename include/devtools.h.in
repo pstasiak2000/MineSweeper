@@ -1,0 +1,9 @@
+#pragma once
+#ifndef DEVTOOLS_H
+#define DEVTOOLS_H
+
+#define COMPILE_WITH_DEV_TOOLS @COMPILE_WITH_DEV_TOOLS@
+
+#endif 
+
+
