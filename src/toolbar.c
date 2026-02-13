@@ -52,6 +52,7 @@ GMenuModel *create_menu(AppCtx *ctx) {
                         "Developer Tools",
                         "app.developer-tools");
     #endif
+    
     // Difficulty submenu
     GMenu *difficulty_menu = g_menu_new();
     g_menu_append(difficulty_menu, "Easy", "app.Difficulty::easy");

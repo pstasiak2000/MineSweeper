@@ -35,15 +35,11 @@ static void action_solve(GSimpleAction *action, GVariant *p, gpointer user_data)
 
     reveal_all_blocks(game->grid);
     timer_pause(&ctx->timer);
-    char popup_title[128] = "You win!";
-    char popup_message[128];
-    sprintf(popup_message,
-         "Congratulations! You completed the puzzle in %02d:%02d"
-         ,get_minutes(&ctx->timer),get_seconds(&ctx->timer));
 
-    
-
-    quick_message(GTK_WINDOW(ctx->ui->window), popup_title, popup_message);
+    // Print out the victory message
+    victory_message(
+        GTK_WINDOW(ctx->ui->window),
+        &ctx->timer);
 }
 
 static void action_quit(GSimpleAction *action, GVariant *p, gpointer user_data) {

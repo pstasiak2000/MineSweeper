@@ -1,6 +1,19 @@
 
 #include "base.h"
 
+void 
+victory_message(GtkWindow *window, Timer *timer)
+{
+    char popup_title[128] = "🎉 You win! 🎉 ";
+    char popup_message[128];
+    sprintf(popup_message,
+         "Congratulations! You completed the puzzle in %02d:%02d"
+         ,get_minutes(timer),get_seconds(timer));
+
+    quick_message(window, popup_title, popup_message);
+}
+
+
 void update_mine_labels(Game *game){
     for (int row = 0; row < game->grid_size[0]; row++) {
         for (int col = 0; col < game->grid_size[1]; col++) {
@@ -154,18 +167,15 @@ static void on_cell_clicked(GtkButton *button, gpointer user_data)
         timer_pause(&ctx->timer);
         game->status = GAME_LOST;
     } else if(check_win_status(game->grid)) { 
-        // g_print("Congratulations - You won!!!\n");
-        // reveal_all_blocks(game->grid);
-        // timer_pause(&ctx->timer);
-        // game->status = GAME_WON;
+        g_print("Congratulations - You won!!!\n");
+        reveal_all_blocks(game->grid);
+        timer_pause(&ctx->timer);
+        game->status = GAME_WON;
 
-        // // Message box;
-        // char popup_title[8] = "You win!";
-        // char popup_message[128];
-        // snprintf(popup_message, sizeof(popup_message),
-        //     "Congratulations! You completed the puzzle in %02d:%02d",0,0);
-        
-        // quick_message(GTK_WINDOW(ctx->ui->window), popup_title, popup_message);
+        // Message box;
+        victory_message(
+            GTK_WINDOW(ctx->ui->window),
+            &ctx->timer);
 
     }  else {
         reveal_block(game->grid, block->row, block->col);
@@ -208,18 +218,15 @@ static void on_cell_right_clicked(GtkGestureClick *gesture,
                                      block->is_flag ? "flag_label" : "button");
 
     if(check_win_status(game->grid)) { 
-    //   g_print("Congratulations - You won!!!\n");
-    //     reveal_all_blocks(game->grid);
-    //     timer_pause(&ctx->timer);
-    //     game->status = GAME_WON;
+        g_print("Congratulations - You won!!!\n");
+        reveal_all_blocks(game->grid);
+        timer_pause(&ctx->timer);
+        game->status = GAME_WON;
 
-    //     // Message box;
-    //     char popup_title[8] = "You win!";
-    //     char popup_message[128];
-    //     snprintf(popup_message, sizeof(popup_message),
-    //         "Congratulations! You completed the puzzle in %02d:%02d",0,0);
-        
-    //     quick_message(GTK_WINDOW(ctx->ui->window), popup_title, popup_message);
+        // Message box;
+        victory_message(
+            GTK_WINDOW(ctx->ui->window),
+            &ctx->timer);
     }
 }
 
