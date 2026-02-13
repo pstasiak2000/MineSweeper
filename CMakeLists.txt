@@ -19,15 +19,15 @@ else()
     set(GIT_TAG "v0.0.0")
 endif()
 
+### -- Set the project version and date strings
+string(REGEX REPLACE "^v" "" PROJECT_VERSION "${GIT_TAG}")
+string(TIMESTAMP PROJECT_DATE "%Y-%m-%d")
+
 configure_file(
     ${CMAKE_SOURCE_DIR}/include/version.h.in
     ${CMAKE_BINARY_DIR}/generated/version.h
     @ONLY
 )
-
-### -- Set the project version and date strings
-string(REGEX REPLACE "^v" "" PROJECT_VERSION "${GIT_TAG}")
-string(TIMESTAMP PROJECT_DATE "%Y-%m-%d")
 
 project(MineSweeper
         VERSION ${PROJECT_VERSION}
