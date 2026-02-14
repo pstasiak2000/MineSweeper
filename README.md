@@ -27,7 +27,7 @@ It provides a classic Minesweeper experience with a modern GTK4 interface, and i
 You can download the build and release .deb package (follow the Build and Release .deb status badge above) and install it using
 
 ```bash
- sudo apt install ./minesweeper_*.deb
+ sudo apt install ./minesweeper*.deb
 ```
 
 #### Ubuntu 22.0 / Debian 12 or older 
