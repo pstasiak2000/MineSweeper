@@ -23,8 +23,14 @@ It provides a classic Minesweeper experience with a modern GTK4 interface, and i
 
 ### Ubuntu/Debian
 
-For new versions of Ubuntu (Ubuntu 23.0 or newer) you can use the build and release .deb package (follow the Build and Release .deb status badge above).
+#### Ubuntu 23.0 / Debian 13 or newer
+You can download the build and release .deb package (follow the Build and Release .deb status badge above) and install it using
 
+```bash
+ sudo apt install ./minesweeper_*.deb
+```
+
+#### Ubuntu 22.0 / Debian 12 or older 
 For older versions of Ubuntu, you will need to build the .deb package first. The script is provided in ```/scripts/build-deb.sh```.
 
 Firstly make sure the relevant dependencies are installed:
@@ -42,7 +48,7 @@ Now from repo root, run the build script
 This will create a ```minesweeper_X.Y.Z-1_amd64.deb``` in the parent directory. You can now install the application with
 
 ```bash
-  sudo apt install ./minesweeper_X.Y.Z-1_amd64.deb
+  sudo apt install ./minesweeper*.deb
 ```
 
 ### Arch Linux
