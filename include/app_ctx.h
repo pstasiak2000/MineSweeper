@@ -4,6 +4,7 @@
 #include "gui/gui.h"
 #include "game_engine.h"
 #include "timer/timer.h"
+#include "ldbd/ldbd.h"
 
 typedef struct {
     GtkApplication *app;

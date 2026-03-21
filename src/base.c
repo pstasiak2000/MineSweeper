@@ -167,19 +167,32 @@ static void on_cell_clicked(GtkButton *button, gpointer user_data)
         timer_pause(&ctx->timer);
         game->status = GAME_LOST;
     } else if(check_win_status(game->grid)) { 
+	    run_win_events(ctx);
+    }  else {
+        reveal_block(game->grid, block->row, block->col);
+    }
+}
+
+void run_win_events(AppCtx *ctx){	
         g_print("Congratulations - You won!!!\n");
-        reveal_all_blocks(game->grid);
+        reveal_all_blocks(ctx->game->grid);
         timer_pause(&ctx->timer);
-        game->status = GAME_WON;
+        ctx->game->status = GAME_WON;
+
+	// Leaderboard events will happen here
+	char *entry_name = "No Name";
+	LDBD_Entry entry = LDBD_create_entry(entry_name,100,0);
+	
+	printf("%s",entry.name);
+
+	LDBD_save_entry(&entry);
 
         // Message box;
         victory_message(
             GTK_WINDOW(ctx->ui->window),
             &ctx->timer);
+	
 
-    }  else {
-        reveal_block(game->grid, block->row, block->col);
-    }
 }
 
 static void on_cell_right_clicked(GtkGestureClick *gesture,
@@ -218,15 +231,7 @@ static void on_cell_right_clicked(GtkGestureClick *gesture,
                                      block->is_flag ? "flag_label" : "button");
 
     if(check_win_status(game->grid)) { 
-        g_print("Congratulations - You won!!!\n");
-        reveal_all_blocks(game->grid);
-        timer_pause(&ctx->timer);
-        game->status = GAME_WON;
-
-        // Message box;
-        victory_message(
-            GTK_WINDOW(ctx->ui->window),
-            &ctx->timer);
+	    run_win_events(ctx);
     }
 }
 

@@ -64,6 +64,7 @@ set(RESOURCES_C "${CMAKE_CURRENT_SOURCE_DIR}/src/resources.c")
 add_library(timer STATIC src/timer/timer.c)
 add_library(gui STATIC src/gui/gui.c)
 add_library(game_engine STATIC src/game/game_engine.c)
+add_library(ldbd STATIC src/ldbd/ldbd.c)
 
 target_include_directories(timer PUBLIC
     src/timer
@@ -81,6 +82,11 @@ target_include_directories(game_engine PUBLIC
 )
 
 
+target_include_directories(ldbd PUBLIC
+    src/ldbd
+    ${GTK4_INCLUDE_DIRS}
+)
+
 target_compile_options(timer PUBLIC ${GTK4_CFLAGS_OTHER})
 target_link_libraries(timer PUBLIC ${GTK4_LIBRARIES})
 
@@ -89,6 +95,10 @@ target_link_libraries(gui PUBLIC ${GTK4_LIBRARIES})
 
 target_compile_options(game_engine PUBLIC ${GTK4_CFLAGS_OTHER})
 target_link_libraries(game_engine PUBLIC ${GTK4_LIBRARIES})
+
+
+target_compile_options(ldbd PUBLIC ${GTK4_CFLAGS_OTHER})
+target_link_libraries(ldbd PUBLIC ${GTK4_LIBRARIES})
 
 # --- Executable ---
 add_executable(MineSweeper 
@@ -107,7 +117,7 @@ target_include_directories(MineSweeper PRIVATE
 )
 
 target_compile_options(MineSweeper PRIVATE ${GTK4_CFLAGS_OTHER})
-target_link_libraries(MineSweeper PRIVATE timer gui game_engine ${GTK4_LIBRARIES})
+target_link_libraries(MineSweeper PRIVATE timer gui game_engine ldbd ${GTK4_LIBRARIES})
 
 
 ### --- Install the executable ---

@@ -33,13 +33,15 @@ static void action_solve(GSimpleAction *action, GVariant *p, gpointer user_data)
     AppCtx *ctx = user_data;
     Game *game = ctx->game;
 
-    reveal_all_blocks(game->grid);
-    timer_pause(&ctx->timer);
-
-    // Print out the victory message
-    victory_message(
-        GTK_WINDOW(ctx->ui->window),
-        &ctx->timer);
+    
+    run_win_events(ctx);
+//    reveal_all_blocks(game->grid);
+//    timer_pause(&ctx->timer);
+//
+//    // Print out the victory message
+//    victory_message(
+//        GTK_WINDOW(ctx->ui->window),
+//        &ctx->timer);
 }
 
 static void action_quit(GSimpleAction *action, GVariant *p, gpointer user_data) {

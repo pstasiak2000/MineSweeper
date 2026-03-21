@@ -9,7 +9,6 @@
 #include "base.h"
 #include "toolbar.h"
 
-
 static int counter = 0;
 
 static void activate(GtkApplication *app, gpointer user_data) {
@@ -102,6 +101,10 @@ int main(int argc, char **argv) {
         .game = &game,
         .ui = &ui,
     };
+
+    // Create the save data paths
+    LDBD_save_data_path = LDBD_create_save_data_path("leaderboard.dat");
+    printf("Save data generated in %s\n", LDBD_save_data_path);
 
     size_t n;
     const GActionEntry *actions = get_actions(&n);
