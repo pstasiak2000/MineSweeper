@@ -9,6 +9,9 @@
 #include "base.h"
 #include "toolbar.h"
 
+#define WINDOW_HEIGHT 850
+#define WINDOW_WIDTH 800
+
 static int counter = 0;
 
 static void activate(GtkApplication *app, gpointer user_data) {
@@ -31,7 +34,7 @@ static void activate(GtkApplication *app, gpointer user_data) {
     GtkWidget *window = gtk_application_window_new(app);
     ui->window = window;
     gtk_window_set_title(GTK_WINDOW(window), buf);
-    gtk_window_set_default_size(GTK_WINDOW(window), 900, 900);
+    gtk_window_set_default_size(GTK_WINDOW(window), WINDOW_WIDTH, WINDOW_HEIGHT);
 
     GtkWidget *main_vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
     gtk_widget_set_vexpand(main_vbox, GTK_ALIGN_FILL);
@@ -56,8 +59,16 @@ static void activate(GtkApplication *app, gpointer user_data) {
 
     // Initialize the timer here
     timer_init(&ctx->timer, GTK_LABEL(ui->timer.label));
+	
+	// Creating a grid box for the grid
+	GtkWidget *game_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
+	gtk_widget_set_hexpand(game_box, GTK_ALIGN_FILL);
+		gtk_widget_set_size_request(game_box,WINDOW_WIDTH,WINDOW_HEIGHT);
+	
+	gtk_box_append(GTK_BOX(main_vbox), game_box);
+    gtk_widget_add_css_class(game_box, "game_box");
 
-    /* Generate the grid */
+	/* Generate the grid */
     ui->grid = create_empty_gui_grid();
     game->grid = create_game_grid(game->grid_size);
 
@@ -67,13 +78,10 @@ static void activate(GtkApplication *app, gpointer user_data) {
     set_mines(game->mines, game->grid); 
     update_mine_labels(game);
 
-    
-
     // gtk_widget_set_visible(ui->grid, TRUE);
 
     // Add the grid to your main vbox
-    gtk_box_append(GTK_BOX(main_vbox), ctx->ui->grid);
-
+    gtk_box_append(GTK_BOX(game_box), ctx->ui->grid);
 
     /* Attach CSS provider to the entire display */
     gtk_style_context_add_provider_for_display(

@@ -37,9 +37,9 @@ void update_mine_labels(Game *game){
 
 static int select_minimum_box_size(const char *level){
     if(strcmp(level,"easy") == 0)
-        return 50;
+        return 30;
     else if(strcmp(level,"medium") == 0)
-        return 40;
+        return 20;
     else if(strcmp(level,"hard") == 0)
         return 10;
     else

@@ -49,18 +49,8 @@ configure_file(
 # Use pre-generated resources.c in src/
 set(RESOURCES_C "${CMAKE_CURRENT_SOURCE_DIR}/src/resources.c")
 
-# add_custom_command(
-#     OUTPUT ${RESOURCES_C}
-#     COMMAND glib-compile-resources
-#             --sourcedir=${CMAKE_CURRENT_SOURCE_DIR}/resources
-#             --target=${RESOURCES_C}
-#             --generate-source
-#             ${CMAKE_CURRENT_SOURCE_DIR}/resources/resources.gresource.xml
-#     DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/resources/resources.gresource.xml
-#     COMMENT "Compiling GResources..."
-# )
 
-# --- Timer library ---
+# --- Libraries ---
 add_library(timer STATIC src/timer/timer.c)
 add_library(gui STATIC src/gui/gui.c)
 add_library(game_engine STATIC src/game/game_engine.c)
@@ -109,6 +99,17 @@ add_executable(MineSweeper
     ${RESOURCES_C}
 )
 
+# 🔑 Generate resources.c BEFORE building the target
+add_custom_command(
+	TARGET MineSweeper PRE_BUILD
+    COMMAND glib-compile-resources
+            --sourcedir=${CMAKE_CURRENT_SOURCE_DIR}/resources
+            --generate-source
+            --target=${RESOURCES_C}
+            ${CMAKE_CURRENT_SOURCE_DIR}/resources/resources.gresource.xml
+    COMMENT "Generating resources.c"
+)
+
 target_include_directories(MineSweeper PRIVATE
     src
     include
@@ -118,7 +119,6 @@ target_include_directories(MineSweeper PRIVATE
 
 target_compile_options(MineSweeper PRIVATE ${GTK4_CFLAGS_OTHER})
 target_link_libraries(MineSweeper PRIVATE timer gui game_engine ldbd ${GTK4_LIBRARIES})
-
 
 ### --- Install the executable ---
 install(TARGETS MineSweeper
