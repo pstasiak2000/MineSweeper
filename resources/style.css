@@ -1,6 +1,6 @@
 label.timer { font-size: 24pt; font-weight: bold; color: white; }
 label.mines { font-size: 24pt; font-weight: bold; color: white; }
-.header { background-color: rgba(66, 66, 66, 1); }
+.header { background-color: rgba(100, 100, 100, 1); }
 .game_box {background-color:rgba(220, 220, 220, 1); }    
 	.cell {
         background-color: #3a3a3aff;   /* default white */
@@ -35,6 +35,6 @@ label.mines { font-size: 24pt; font-weight: bold; color: white; }
        border: 1px solid rgba(122, 122, 122, 1);
     }
 label.popup_message {
-    font-size: 14pt;
+    font-size: 12pt;
     font-weight: bold;
 }
