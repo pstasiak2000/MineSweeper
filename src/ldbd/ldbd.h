@@ -12,6 +12,7 @@ extern gchar *LDBD_save_data_path;
 /* Leaderboard entry structure for time elapsed and points*/
 typedef struct {
 	const char name[LDBD_MAX_ENTRY_NAME_BUFFER_SIZE];
+	int level;
 	int total_time;
 	int points;
 } LDBD_Entry ;
@@ -26,7 +27,6 @@ typedef struct {
 LDBD_Entry LDBD_create_entry(const char *name, int total_time, int points);
 
 // Save leaderboard entry to file
-void LDBD_save_entry_to_file(FILE *fptr, LDBD_Entry *entry);
 void LDBD_save_entry(LDBD_Entry *entry);
 
 // Create_save data path for leaderboard entries

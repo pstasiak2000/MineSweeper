@@ -2,19 +2,18 @@
 
 gchar *LDBD_save_data_path = NULL;
 
-LDBD_Entry LDBD_create_entry(const char *name, int total_time, int points) {
+LDBD_Entry LDBD_create_entry(const char *name, int level, int total_time, int points) {
 	LDBD_Entry entry;
 	
 	snprintf(entry.name, LDBD_MAX_ENTRY_NAME_BUFFER_SIZE, "%s", name);
+	entry.level = level;
 	entry.total_time = total_time;
 	entry.points = points;
 
 	return entry;
 }
 
-void LDBD_save_entry_to_file(FILE *fptr, LDBD_Entry *entry){
-	
-}
+:w`
 
 void LDBD_save_entry(LDBD_Entry *entry){
 	
