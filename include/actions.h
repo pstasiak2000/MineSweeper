@@ -4,8 +4,6 @@
 #include <gtk/gtk.h>
 #include "base.h"
 
-const GActionEntry *get_actions(size_t *n);
-
 /* --- Game state pointer example --- */
 static const char *current_difficulty = "easy";
 

@@ -7,23 +7,21 @@ static void action_new(GSimpleAction *action, GVariant *p, gpointer user_data) {
     GameUI *ui = ctx->ui;
     Game *game = ctx->game;
 
+	Level level = game->level;
+
     timer_stop(&ctx->timer);
     timer_reset(&ctx->timer);
 
-    ctx->game->mines = reset_mine_number(ctx->game->level);
+    ctx->game->mines = reset_mine_number(level);
 
     char buf[32];
     snprintf(buf,sizeof(buf),"💣 %d", ctx->game->mines);
     update_label_text(ui->mines.label,buf);
 
-    printf("New game triggered. Current difficulty is: %d\n", ctx->game->level);
-    
-    // reset your game state here
-    reset_game_grid(game->grid);
-    set_mines(game->mines, game->grid);
-
-    // Update the mine labels in the new game
-    update_mine_labels(game);
+    printf("New game triggered. Current difficulty is: %d\n", level);
+	
+	regenerate_gtk_grid(ctx);
+	
 }
 
 static void action_solve(GSimpleAction *action, GVariant *p, gpointer user_data) {
@@ -67,9 +65,6 @@ action_toggle_developer_tools(GSimpleAction *action,
             developer_tools);
 }
 
-
-
-
 static void action_about(GSimpleAction *action, GVariant *p, gpointer user_data) {
     printf("MineSweeper GTK4  demo\n");
 }
@@ -105,35 +100,9 @@ static void action_difficulty(GSimpleAction *action, GVariant *p, gpointer user_
         char buf[32];
         snprintf(buf,sizeof(buf),"💣 %d", ctx->game->mines);
         update_label_text(ui->mines.label,buf);
+	
+		regenerate_gtk_grid(ctx);
 
-        /* Clear the existing grid*/
-        GtkWidget *child, *next;
-        for (child = gtk_widget_get_first_child(GTK_WIDGET(ctx->ui->grid));
-            child != NULL;
-            child = next)
-        {
-            next = gtk_widget_get_next_sibling(child);
-            gtk_widget_unparent(child);
-        }
-
-        // Reset the size of the grid based on the level
-        reset_grid_size(level, game->grid_size);
-
-        // Change the new grid size
-        int rows = ctx->game->grid_size[0];
-        int cols = ctx->game->grid_size[1];
-
-        // De-allocate and then re-allocate the grid memory
-        destroy_game_grid(ctx->game->grid);
-
-        game->grid = create_game_grid(ctx->game->grid_size);
-        
-        generate_gtk_grid(ui->grid, ctx);
-        reset_game_grid(game->grid);
-
-        set_mines(game->mines, game->grid);
-        update_mine_labels(game);
-        // gtk_widget_set_visible(ui->grid, TRUE);    
     } else {
         return; // user clicked No
     }

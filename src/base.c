@@ -14,6 +14,8 @@ victory_message(GtkWindow *window, Timer *timer)
 }
 
 
+
+
 void update_mine_labels(Game *game){
     for (int row = 0; row < game->grid_size[0]; row++) {
         for (int col = 0; col < game->grid_size[1]; col++) {
@@ -98,28 +100,72 @@ static void reveal_block(GameGrid *grid, int row, int col) {
         }
     }
 }
+/* Reveal a singular block */
+static void uncover_block(Block *block, Level level){	
+	block->active = FALSE;
+	gtk_stack_set_visible_child_name(
+	GTK_STACK(block->stack), "label");
+}
 
-static void reveal_all_mines(GameGrid *grid){
+/* Reveal a singular mine */
+static void uncover_mine_lose(Block *block, Level level){
+	uncover_block(block, level);
+	switch(level){
+		case(EASY):
+			gtk_widget_add_css_class(block->label, "mine-label-easy-lose");
+			break;
+		case(MEDIUM):
+			gtk_widget_add_css_class(block->label, "mine-label-medium-lose");
+			break;
+		case(HARD):
+			gtk_widget_add_css_class(block->label, "mine-label-hard-lose");
+			break;
+		default:
+			gtk_widget_add_css_class(block->label, "mine-label-easy-lose");
+	}
+}
+
+/* Reveal a singular mine */
+static void uncover_mine_win(Block *block, Level level){
+	uncover_block(block, level);
+	switch(level){
+		case(EASY):
+			gtk_widget_add_css_class(block->label, "mine-label-easy-win");
+			break;
+		case(MEDIUM):
+			gtk_widget_add_css_class(block->label, "mine-label-medium-win");
+			break;
+		case(HARD):
+			gtk_widget_add_css_class(block->label, "mine-label-hard-win");
+			break;
+		default:
+			gtk_widget_add_css_class(block->label, "mine-label-easy-win");
+	}
+}
+
+void uncover_all_blocks(GameGrid *grid, Level level){
     for (int row = 0; row < grid->size; row++) {
         for (int col = 0; col < grid->rows[0].size; col++) { 
-            grid->rows[row].cols[col].active = FALSE;  
-            if(grid->rows[row].cols[col].mine){
-                gtk_stack_set_visible_child_name(
-                    GTK_STACK(grid->rows[row].cols[col].stack), "label");
-            }
+			Block *block = &grid->rows[row].cols[col];
+			if(block->mine)
+				uncover_mine_win(block, level);
+			else
+				uncover_block(block, level);
+		}
+    }
+}
+
+static void uncover_all_mines(GameGrid *grid, Level level){
+    for (int row = 0; row < grid->size; row++) {
+        for (int col = 0; col < grid->rows[0].size; col++) { 
+			Block *block = &grid->rows[row].cols[col];
+           	block->active = FALSE; 
+			if(block->mine)
+				uncover_mine_lose(block, level);
         }
     }
 }
 
-void reveal_all_blocks(GameGrid *grid){
-    for (int row = 0; row < grid->size; row++) {
-        for (int col = 0; col < grid->rows[0].size; col++) { 
-            grid->rows[row].cols[col].active = FALSE;  
-                gtk_stack_set_visible_child_name(
-                    GTK_STACK(grid->rows[row].cols[col].stack), "label");
-        }
-    }
-}
 
 
 static int check_win_status(GameGrid *grid){
@@ -161,7 +207,7 @@ static void on_cell_clicked(GtkButton *button, gpointer user_data)
 
     if (block->mine) {
         g_print("💥 Mine!\n"); 
-        reveal_all_mines(game->grid); // Reveal all mines on the screen
+        uncover_all_mines(game->grid,game->level); // Reveal all mines on the screen
         timer_pause(&ctx->timer);
         game->status = GAME_LOST;
     } else if(check_win_status(game->grid)) { 
@@ -172,10 +218,12 @@ static void on_cell_clicked(GtkButton *button, gpointer user_data)
 }
 
 void run_win_events(AppCtx *ctx){	
-        g_print("Congratulations - You won!!!\n");
-        reveal_all_blocks(ctx->game->grid);
-        timer_pause(&ctx->timer);
-        ctx->game->status = GAME_WON;
+	ctx->game->mines = 0;
+	update_mine_labels(ctx->game);	
+	g_print("Congratulations - You won!!!\n");
+	uncover_all_blocks(ctx->game->grid, ctx->game->level);
+	timer_pause(&ctx->timer);
+	ctx->game->status = GAME_WON;
 	
     Level level = ctx->game->level;
 
@@ -251,6 +299,7 @@ void reset_visibility(Game *game){
     }
 }
 
+
 void generate_gtk_grid(GtkWidget *grid, AppCtx *ctx) {
     Game *game = ctx->game;
 	
@@ -287,27 +336,12 @@ void generate_gtk_grid(GtkWidget *grid, AppCtx *ctx) {
             // // --- Create flag label ---
             GtkWidget *flag_label = create_block_widget(label_factory,"🚩");
             block->flag = flag_label;
+			
 
             // --- CSS classes ---
             gtk_widget_add_css_class(btn, "cell");
-            
-			switch(level) {
-				case(EASY):
-                	gtk_widget_add_css_class(label, "cell-label-easy");
-                	gtk_widget_add_css_class(flag_label, "flag-label-easy");
-					break;
-				case(MEDIUM):
-                	gtk_widget_add_css_class(label, "cell-label-medium");
-                	gtk_widget_add_css_class(flag_label, "flag-label-medium");
-					break;
-				case(HARD):
-                	gtk_widget_add_css_class(label, "cell-label-hard");
-                	gtk_widget_add_css_class(flag_label, "flag-label-hard");
-					break;
-				default:
-                	gtk_widget_add_css_class(label, "cell-label-hard");
-                	gtk_widget_add_css_class(flag_label, "flag-label-hard");
-			}
+           
+		   set_widget_css_classes(label, flag_label, level);	
 
             // --- Minimum box size ---
             int min_box_size = select_minimum_box_size(game->level);
@@ -342,4 +376,36 @@ void generate_gtk_grid(GtkWidget *grid, AppCtx *ctx) {
                              G_CALLBACK(on_cell_right_clicked), data);
         }
     }
+}
+
+
+void regenerate_gtk_grid(AppCtx *ctx){
+	
+	/* Clear the existing grid*/
+	GtkWidget *child, *next;
+	for (child = gtk_widget_get_first_child(GTK_WIDGET(ctx->ui->grid));
+		child != NULL;
+		child = next)
+	{
+		next = gtk_widget_get_next_sibling(child);
+		gtk_widget_unparent(child);
+	}
+
+	// Reset the size of the grid based on the level
+	reset_grid_size(ctx->game->level, ctx->game->grid_size);
+
+	// Change the new grid size
+	int rows = ctx->game->grid_size[0];
+	int cols = ctx->game->grid_size[1];
+
+	// De-allocate and then re-allocate the grid memory
+	destroy_game_grid(ctx->game->grid);
+
+	ctx->game->grid = create_game_grid(ctx->game->grid_size);
+	
+	generate_gtk_grid(ctx->ui->grid, ctx);
+	reset_game_grid(ctx->game->grid, ctx->game->level);
+
+	set_mines(ctx->game->mines, ctx->game->grid);
+	update_mine_labels(ctx->game);
 }

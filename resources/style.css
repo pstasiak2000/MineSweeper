@@ -40,6 +40,36 @@ label.mines { font-size: 24pt; font-weight: bold; color: white; }
        font-size: 1.5em;
        border: 1px solid rgba(150, 150, 150, 1);
     }
+    .mine-label-easy-lose {
+   	   background-color: rgba(117, 20, 8,1);
+       font-size: 4.5em;
+       border: 2px solid rgba(150, 150, 150, 1);
+    }
+    .mine-label-medium-lose {
+   	   background-color: rgba(117, 20, 8,1);
+       font-size: 3em;
+       border: 1px solid rgba(150, 150, 150, 1);
+    }
+    .mine-label-hard-lose {
+   	   background-color: rgba(117, 20, 8,1);
+       font-size: 1.5em;
+       border: 1px solid rgba(150, 150, 150, 1);
+    }
+    .mine-label-easy-win {
+   	   background-color: rgba(52, 117, 8,1);
+       font-size: 4.5em;
+       border: 2px solid rgba(150, 150, 150, 1);
+    }
+    .mine-label-medium-win {
+   	   background-color: rgba(52, 117, 8,1);
+       font-size: 3em;
+       border: 1px solid rgba(150, 150, 150, 1);
+    }
+    .mine-label-hard-win {
+	   background-color: rgba(52, 117, 8,1);
+       font-size: 1.5em;
+       border: 1px solid rgba(150, 150, 150, 1);
+    }
 label.popup_message {
     font-size: 12pt;
     font-weight: bold;

@@ -12,11 +12,17 @@ void update_mine_labels(Game *game);
 /* Running the events which occur on winning */
 void run_win_events(AppCtx *ctx);
 
-/* Fill the GTK GameGrid struct and attach it to grid */
+/* Fill the Gtk GameGrid struct and attach it to UI grid */
 void generate_gtk_grid(GtkWidget *grid, AppCtx *ctx);
 
-/* Reveal all of the blocks in the game */ 
-void reveal_all_blocks(GameGrid *grid);
+/* Re-generate the Gtk GameGrid struct fully and re-attach it to UI grid */
+void regenerate_gtk_grid(AppCtx *ctx);
 
+/* Reveal all of the blocks in the game */ 
+void uncover_all_blocks(GameGrid *grid, Level level);
+
+/* Sets the activity and visibility for all blocks to TRUE */ 
 void reset_visibility(Game *game);
+
+
 #endif

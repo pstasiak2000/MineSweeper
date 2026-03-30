@@ -74,7 +74,7 @@ static void activate(GtkApplication *app, gpointer user_data) {
 
     generate_gtk_grid(ui->grid,ctx);    
 
-    reset_game_grid(game->grid);
+    reset_game_grid(game->grid, game->level);
     set_mines(game->mines, game->grid); 
     update_mine_labels(game);
 

@@ -72,10 +72,14 @@ void reset_grid_size(Level level, int grid_size[2]);
 void set_mines(int mines, GameGrid *grid);
 
 // Resets the game grid to the default state for the same grid size
-void reset_game_grid(GameGrid *grid);
+void reset_game_grid(GameGrid *grid, Level level);
 
 // Prints the board the solved board in ASCII
 void print_board(GameGrid *grid);
+
+/* Set the widget css classes */
+void set_widget_css_classes(GtkWidget *label, GtkWidget *flag_label, Level level);
+void set_widget_css_classes_all(GameGrid *grid, Level level);
 
 #endif 
 

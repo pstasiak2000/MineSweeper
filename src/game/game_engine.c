@@ -84,19 +84,57 @@ void destroy_game_grid(GameGrid *grid){
     free(grid);
 }
 
-void reset_game_grid(GameGrid *grid){
+void set_widget_css_classes(GtkWidget *label, GtkWidget *flag_label, Level level){
+	switch(level) {
+		case(EASY):
+			gtk_widget_add_css_class(label, "cell-label-easy");
+			gtk_widget_add_css_class(flag_label, "flag-label-easy");
+  			break;
+  		case(MEDIUM):
+			gtk_widget_add_css_class(label, "cell-label-medium");
+			gtk_widget_add_css_class(flag_label, "flag-label-medium");
+			break;
+		case(HARD):
+			gtk_widget_add_css_class(label, "cell-label-hard");
+			gtk_widget_add_css_class(flag_label, "flag-label-hard");
+			break;
+		default:
+			gtk_widget_add_css_class(label, "cell-label-hard");
+			gtk_widget_add_css_class(flag_label, "flag-label-hard");
+	}
+}
+
+void set_widget_css_classes_all(GameGrid *grid, Level level){
+    int rows = grid->size;
+    int cols = grid->rows[0].size;
+
+    for (int row = 0; row < rows; row++) {
+        for (int col = 0; col < cols; col++) {
+        	
+   			Block *block = &grid->rows[row].cols[col];
+
+			GtkWidget *label = block->label;
+			GtkWidget *flag_label = block->flag;
+			
+			set_widget_css_classes(label, flag_label, level);
+		}
+	}
+}
+
+void reset_game_grid(GameGrid *grid, Level level){
     int rows = grid->size;
     int cols = grid->rows[0].size;
 
     for (int i = 0; i < rows; i++) {
         for (int j = 0; j < cols; j++) {
-                    grid->rows[i].cols[j].val = 0;
-                    grid->rows[i].cols[j].active = TRUE;
-                    grid->rows[i].cols[j].flag = FALSE;
-                    grid->rows[i].cols[j].mine = FALSE;
-                    gtk_stack_set_visible_child_name(
-                        GTK_STACK(grid->rows[i].cols[j].stack), 
-                        "button");
+			grid->rows[i].cols[j].val = 0;
+			grid->rows[i].cols[j].active = TRUE;
+			grid->rows[i].cols[j].flag = FALSE;
+			grid->rows[i].cols[j].mine = FALSE;
+			gtk_stack_set_visible_child_name(
+				GTK_STACK(grid->rows[i].cols[j].stack), 
+				"button");
+
         }
     }   
 }
@@ -143,7 +181,6 @@ void set_mines(int mines, GameGrid *grid) {
 
     // print_board(grid);
 }
-
 
 
 
