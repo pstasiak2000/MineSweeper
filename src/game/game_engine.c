@@ -1,30 +1,33 @@
 #include "game_engine.h"
 
-int reset_mine_number(const char* level){
-    if(strcmp(level,"easy") == 0)
-        return MINES_EASY;
-    else if(strcmp(level,"medium") == 0)
-        return MINES_MEDIUM;
-    else if(strcmp(level,"hard") == 0)
-        return MINES_HARD; 
-    else 
-        return 10;
+int reset_mine_number(Level level){
+	switch(level) {
+		case(EASY):  return MINES_EASY;
+		case(MEDIUM):return MINES_MEDIUM;
+		case(HARD):  return MINES_HARD;
+		default:     return MINES_EASY;
+	}
 }
 
-void reset_grid_size(const char *level, int grid_size[2]) {
-    if (strcmp(level, "easy") == 0) {
-        grid_size[0] = GRID_SIZE_EASY;
-        grid_size[1] = GRID_SIZE_EASY;
-    } else if (strcmp(level, "medium") == 0) {
-        grid_size[0] = GRID_SIZE_MEDIUM;
-        grid_size[1] = GRID_SIZE_MEDIUM;
-    } else if (strcmp(level, "hard") == 0) {
-        grid_size[0] = GRID_SIZE_HARD;
-        grid_size[1] = GRID_SIZE_HARD;
-    } else {  // default
-        grid_size[0] = GRID_SIZE_EASY;
-        grid_size[1] = GRID_SIZE_EASY;
-    }
+void reset_grid_size(Level level, int grid_size[2]) {
+
+	switch(level) {
+		case(EASY):
+         	grid_size[0] = GRID_SIZE_EASY;
+         	grid_size[1] = GRID_SIZE_EASY;
+			break;
+		case(MEDIUM):
+         	grid_size[0] = GRID_SIZE_MEDIUM;
+         	grid_size[1] = GRID_SIZE_MEDIUM;
+			break;
+		case(HARD):
+         	grid_size[0] = GRID_SIZE_HARD;
+         	grid_size[1] = GRID_SIZE_HARD;
+			break;
+		default:
+         	grid_size[0] = GRID_SIZE_EASY;
+         	grid_size[1] = GRID_SIZE_EASY;
+	}
 }
 
 void print_board(GameGrid *grid){

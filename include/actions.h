@@ -15,5 +15,7 @@ static const char *difficulty_levels[] = { "easy", "medium", "hard" };
 /* Prints the victory message when the game is won */
 void victory_message(GtkWindow *window, Timer *timer);
 
+/* Register all of the application actions here */ 
+void register_app_actions(GtkApplication *app, AppCtx *ctx);
 
 #endif

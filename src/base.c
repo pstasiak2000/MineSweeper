@@ -35,15 +35,13 @@ void update_mine_labels(Game *game){
     }  
 }
 
-static int select_minimum_box_size(const char *level){
-    if(strcmp(level,"easy") == 0)
-        return 30;
-    else if(strcmp(level,"medium") == 0)
-        return 20;
-    else if(strcmp(level,"hard") == 0)
-        return 10;
-    else
-        return 0;
+static int select_minimum_box_size(Level level){
+	switch(level) {
+		case EASY:   return 30;
+		case MEDIUM: return 20;
+		case HARD:   return 10;
+		default:     return 0;
+	}
 }
 
 static GtkWidget *button_factory(void *user_data){
@@ -178,10 +176,12 @@ void run_win_events(AppCtx *ctx){
         reveal_all_blocks(ctx->game->grid);
         timer_pause(&ctx->timer);
         ctx->game->status = GAME_WON;
+	
+    Level level = ctx->game->level;
 
 	// Leaderboard events will happen here
 	char *entry_name = "No Name";
-	LDBD_Entry entry = LDBD_create_entry(entry_name,100,0);
+	LDBD_Entry entry = LDBD_create_entry(entry_name,level,100,0);
 	
 	printf("%s",entry.name);
 
@@ -253,6 +253,8 @@ void reset_visibility(Game *game){
 
 void generate_gtk_grid(GtkWidget *grid, AppCtx *ctx) {
     Game *game = ctx->game;
+	
+	Level level = game->level;
 
     int rows = game->grid_size[0];
     int cols = game->grid_size[1];
@@ -288,19 +290,27 @@ void generate_gtk_grid(GtkWidget *grid, AppCtx *ctx) {
 
             // --- CSS classes ---
             gtk_widget_add_css_class(btn, "cell");
-            if (strcmp(game->difficulty, "easy") == 0){
-                gtk_widget_add_css_class(label, "cell-label-easy");
-                gtk_widget_add_css_class(flag_label, "flag-label-easy");
-            } else if (strcmp(game->difficulty, "medium") == 0){
-                gtk_widget_add_css_class(label, "cell-label-medium");
-                gtk_widget_add_css_class(flag_label, "flag-label-medium");
-            } else {
-                gtk_widget_add_css_class(label, "cell-label-hard");
-                gtk_widget_add_css_class(flag_label, "flag-label-hard");
-            }
+            
+			switch(level) {
+				case(EASY):
+                	gtk_widget_add_css_class(label, "cell-label-easy");
+                	gtk_widget_add_css_class(flag_label, "flag-label-easy");
+					break;
+				case(MEDIUM):
+                	gtk_widget_add_css_class(label, "cell-label-medium");
+                	gtk_widget_add_css_class(flag_label, "flag-label-medium");
+					break;
+				case(HARD):
+                	gtk_widget_add_css_class(label, "cell-label-hard");
+                	gtk_widget_add_css_class(flag_label, "flag-label-hard");
+					break;
+				default:
+                	gtk_widget_add_css_class(label, "cell-label-hard");
+                	gtk_widget_add_css_class(flag_label, "flag-label-hard");
+			}
 
             // --- Minimum box size ---
-            int min_box_size = select_minimum_box_size(game->difficulty);
+            int min_box_size = select_minimum_box_size(game->level);
             gtk_widget_set_size_request(stack, min_box_size, min_box_size);
 
             // --- Add children to stack ---

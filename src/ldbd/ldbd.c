@@ -13,8 +13,6 @@ LDBD_Entry LDBD_create_entry(const char *name, int level, int total_time, int po
 	return entry;
 }
 
-:w`
-
 void LDBD_save_entry(LDBD_Entry *entry){
 	
 	FILE *fptr = fopen(LDBD_save_data_path, "ab+");

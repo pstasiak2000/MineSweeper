@@ -101,7 +101,7 @@ int main(int argc, char **argv) {
     GtkApplication *app =
         gtk_application_new("com.example.menu", G_APPLICATION_FLAGS_NONE);
 
-    Game game = { .difficulty = "easy", .mines = 10, .grid_size={10,10}, .status=GAME_PLAYING};
+    Game game = { .level = EASY, .mines = 10, .grid_size={10,10}, .status=GAME_PLAYING};
     GameUI ui = {0};
 
     AppCtx ctx = {
@@ -113,13 +113,12 @@ int main(int argc, char **argv) {
     // Create the save data paths
     LDBD_save_data_path = LDBD_create_save_data_path("leaderboard.dat");
     printf("Save data generated in %s\n", LDBD_save_data_path);
-
-    size_t n;
-    const GActionEntry *actions = get_actions(&n);
-
-    g_action_map_add_action_entries(G_ACTION_MAP(app), actions, n, &ctx);
-
-    g_signal_connect(app, "activate", G_CALLBACK(activate), &ctx);
+	
+	/* App actions are registered here*/ 
+	register_app_actions(app, &ctx);	
+	g_assert(g_action_map_lookup_action(G_ACTION_MAP(app), "difficulty") != NULL);
+    
+	g_signal_connect(app, "activate", G_CALLBACK(activate), &ctx);
 
     return g_application_run(G_APPLICATION(app), argc, argv);
 }

@@ -54,11 +54,25 @@ GMenuModel *create_menu(AppCtx *ctx) {
     #endif
     
     // Difficulty submenu
+	GMenuItem *item;
+
     GMenu *difficulty_menu = g_menu_new();
-    g_menu_append(difficulty_menu, "Easy", "app.Difficulty::easy");
-    g_menu_append(difficulty_menu, "Medium", "app.Difficulty::medium");
-    g_menu_append(difficulty_menu, "Hard", "app.Difficulty::hard");
-    g_menu_append_submenu(options, "Difficulty", G_MENU_MODEL(difficulty_menu));
+	item = g_menu_item_new("Easy", "app.difficulty");
+	g_menu_item_set_attribute_value(item, "target",g_variant_new_int32(EASY));
+	g_menu_append_item(difficulty_menu, item);
+ 
+		
+	item = g_menu_item_new("Medium", "app.difficulty");
+	g_menu_item_set_attribute_value(item, "target",g_variant_new_int32(MEDIUM));
+	g_menu_append_item(difficulty_menu, item);
+
+	item = g_menu_item_new("Hard", "app.difficulty");
+	g_menu_item_set_attribute_value(item, "target",g_variant_new_int32(HARD));
+	g_menu_append_item(difficulty_menu, item);
+//   g_menu_append(difficulty_menu, "Easy", "app.Difficulty::0");
+ //   g_menu_append(difficulty_menu, "Medium", "app.Difficulty::1");
+ //   g_menu_append(difficulty_menu, "Hard", "app.Difficulty::2");
+   g_menu_append_submenu(options, "Difficulty", G_MENU_MODEL(difficulty_menu));
 
     g_menu_append_submenu(menubar, "Options", G_MENU_MODEL(options));
 

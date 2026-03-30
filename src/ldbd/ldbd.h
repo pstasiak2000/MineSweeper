@@ -24,7 +24,7 @@ typedef struct {
 } LDBD_LeaderBoard;
 
 // Create a leaderboard 
-LDBD_Entry LDBD_create_entry(const char *name, int total_time, int points);
+LDBD_Entry LDBD_create_entry(const char *name, int level, int total_time, int points);
 
 // Save leaderboard entry to file
 void LDBD_save_entry(LDBD_Entry *entry);

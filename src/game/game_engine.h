@@ -11,7 +11,11 @@
 #define GRID_SIZE_MEDIUM 15
 #define GRID_SIZE_HARD 30
 
-
+typedef enum {
+	EASY,
+	MEDIUM,
+	HARD
+} Level;
 
 typedef struct {
     int row;
@@ -43,8 +47,9 @@ typedef enum {
 } GameStatus;
 
 typedef struct {
-    const char *difficulty;
-    int mines;
+//    const char *difficulty;
+	Level level;	
+	int mines;
     int grid_size[2];
     GameStatus status;
     GameGrid *grid;
@@ -58,10 +63,10 @@ GameGrid *create_game_grid(int grid_size[2]);
 void destroy_game_grid(GameGrid *grid);
 
 // Resets the mine counter of the selected difficulty
-int reset_mine_number(const char* level);
+int reset_mine_number(Level level);
 
 // Resets the grid size counters of the selected difficulty
-void reset_grid_size(const char *level, int grid_size[2]);
+void reset_grid_size(Level level, int grid_size[2]);
 
 // Initializes the positions of the mines on the grid and updates the neighbours
 void set_mines(int mines, GameGrid *grid);
