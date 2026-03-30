@@ -24,10 +24,10 @@ curl -L "$DEB_URL" -o "$TMP_FILE"
 echo "DEB URL: $DEB_URL"
 echo "TMP FILE: $TMP_FILE"
 
-#echo "📦 Installing..."
-#sudo apt install -y "$TMP_FILE"
-#
-#echo "🧹 Cleaning up..."
-#rm "$TMP_FILE"
+echo "📦 Installing..."
+sudo apt install -y "$TMP_FILE"
+
+echo "🧹 Cleaning up..."
+rm "$TMP_FILE"
 
 echo "✅ Installation complete!"
