@@ -1,6 +1,20 @@
-label.timer { font-size: 24pt; font-weight: bold; color: white; }
-label.mines { font-size: 24pt; font-weight: bold; color: white; }
-.header { background-color: rgba(100, 100, 100, 1); }
+.header {
+	background-color: rgba(100, 100, 100, 1);
+	border: 5px solid rgba(80,80,80,1);
+	border-radius: 0px;
+}
+
+label.timer { 
+	font-size: 24pt; 
+	font-weight: bold;
+	}
+
+label.mines { 
+	font-size: 24pt; 
+	font-weight: bold; 
+	color: white; 
+	}
+
 .game_box {background-color:rgba(50, 50, 50, 1); }    
 	.cell { 
         background-color: rgba(40,40,40,1);   /* default white */
